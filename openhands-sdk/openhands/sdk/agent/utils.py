@@ -166,7 +166,8 @@ def fix_malformed_tool_arguments(
     if not isinstance(arguments, dict):
         return arguments
 
-    fixed_arguments = arguments.copy()
+    # Drop XML-residue / whitespace keys and None values before type repairs.
+    fixed_arguments = _normalize_arguments(arguments)
 
     if isinstance(action_type, dict):
         defs = action_type.get("$defs", {})
@@ -283,9 +284,25 @@ _SHELL_TOOL_FALLBACK_COMMANDS = frozenset({"find", "git", "ls", "pwd"})
 # Typo normalization for common mistakes in security_risk field
 _SECURITY_RISK_TYPOS = {"security_rort", "securtiy_risk", "security_riks"}
 
+# Argument keys that contain whitespace or XML tool-calling residue (e.g.
+# ``description placeholder\n</parameter``) are LLM / XML→JSON garbage.
+# Action schemas use ``extra=forbid``, so leaving them fails validation even
+# when required fields like ``command`` are present and valid.
+_MALFORMED_ARGUMENT_KEY_RE = re.compile(
+    r"\s|</?\s*parameter|</?\s*function",
+    re.IGNORECASE,
+)
+
+
+def _is_malformed_argument_key(key: object) -> bool:
+    """Return True for argument keys that are clearly not schema field names."""
+    if not isinstance(key, str) or not key:
+        return True
+    return _MALFORMED_ARGUMENT_KEY_RE.search(key) is not None
+
 
 def _normalize_arguments(arguments: dict[str, Any]) -> dict[str, Any]:
-    """Normalize common typos and inconsistencies in tool arguments."""
+    """Normalize common typos and drop obviously malformed argument keys."""
     normalized = arguments.copy()
 
     # Fix security_risk typos
@@ -294,9 +311,18 @@ def _normalize_arguments(arguments: dict[str, Any]) -> dict[str, Any]:
             normalized["security_risk"] = normalized.pop(typo)
             break
 
-    # Remove any arguments that are clearly not valid (None values, etc.)
-    # but keep all others to preserve tool-specific arguments
-    return {k: v for k, v in normalized.items() if v is not None}
+    cleaned: dict[str, Any] = {}
+    for key, value in normalized.items():
+        if value is None:
+            continue
+        if _is_malformed_argument_key(key):
+            logger.warning(
+                "Dropping malformed tool argument key %r (XML residue or whitespace)",
+                key,
+            )
+            continue
+        cleaned[key] = value
+    return cleaned
 
 
 def parse_tool_call_arguments(raw_arguments: str) -> dict[str, Any]:

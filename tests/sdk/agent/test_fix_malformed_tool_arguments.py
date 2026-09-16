@@ -6,6 +6,7 @@ decodes JSON strings for list/dict fields. This handles cases where LLMs
 JSON arrays/objects.
 """
 
+import json
 from typing import Annotated
 
 import pytest
@@ -383,3 +384,42 @@ def test_str_or_list_field_list_passthrough():
     action = StrOrListAction.model_validate(fixed_data)
 
     assert action.value == ["a", "b", "c"]
+
+
+@pytest.mark.parametrize(
+    "bad_key",
+    [
+        "description placeholder\n</parameter",
+        "summary </parameter>",
+        "foo bar",
+        "command\t",
+        "<parameter=summary",
+        "</function>",
+    ],
+)
+def test_drops_malformed_argument_keys(bad_key: str):
+    """XML→JSON residue keys must not fail extra=forbid when real fields are fine."""
+    from openhands.sdk.agent.utils import parse_tool_call_arguments
+
+    class _Terminalish(Action):
+        command: str = Field(description="shell command")
+
+    data = {"command": "pwd", bad_key: ""}
+    fixed = fix_malformed_tool_arguments(data, _Terminalish)
+    assert bad_key not in fixed
+    assert fixed["command"] == "pwd"
+    action = _Terminalish.model_validate(fixed)
+    assert action.command == "pwd"
+
+    raw = json.dumps({"command": "ls", bad_key: ""})
+    parsed = parse_tool_call_arguments(raw)
+    assert bad_key not in parsed
+    assert parsed == {"command": "ls"}
+
+
+def test_keeps_valid_snake_case_keys():
+    data = {"command": "ls", "is_input": False, "timeout": 30.0}
+    fixed = fix_malformed_tool_arguments(data, JsonDecodingTestAction)
+    assert fixed["command"] == "ls"
+    assert "is_input" in fixed
+    assert "timeout" in fixed
