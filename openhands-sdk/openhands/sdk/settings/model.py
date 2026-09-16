@@ -165,12 +165,13 @@ class CondenserSettings(BaseModel):
         },
     )
     max_size: int = Field(
-        default=240,
+        default=100,
         ge=20,
         description=(
             "Maximum number of events kept before the condenser runs. "
-            "Kept on the base settings class for compatibility; concrete "
-            "condenser-settings variants may opt out when this does not apply."
+            "Default 100 so condensation triggers in typical coding sessions "
+            "(previously 240). Kept on the base settings class for compatibility; "
+            "concrete condenser-settings variants may opt out when this does not apply."
         ),
         json_schema_extra={
             SETTINGS_METADATA_KEY: SettingsFieldMetadata(
@@ -297,7 +298,7 @@ class LLMSummarizingCondenserSettings(CondenserSettings):
 class NoOpCondenserSettings(CondenserSettings):
     """Settings for a condenser that leaves conversation views unchanged."""
 
-    max_size: ClassVar[int] = 240  # type: ignore[reportIncompatibleVariableOverride]
+    max_size: ClassVar[int] = 100  # type: ignore[reportIncompatibleVariableOverride]
     condenser_kind: Literal["no_op"] = Field(
         default="no_op",
         description=(
@@ -1315,11 +1316,12 @@ class OpenHandsAgentSettings(AgentSettingsBase):
         },
     )
     tool_concurrency_limit: int = Field(
-        default=1,
+        default=2,
         ge=1,
         description=(
             "Maximum number of tool calls to execute concurrently per agent step. "
-            "1 = sequential (default). Values > 1 enable parallel tool calls; "
+            "Default 2 allows independent read-only tools to overlap. Set 1 for "
+            "fully sequential execution. Values > 1 enable parallel tool calls; "
             "concurrent tools share the conversation object, filesystem, and "
             "working directory, so mutations to shared state may race."
         ),

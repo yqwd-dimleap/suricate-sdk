@@ -211,11 +211,12 @@ class OpenHandsAgentProfile(AgentProfileBase):
         ),
     )
     tool_concurrency_limit: int = Field(
-        default=1,
+        default=2,
         ge=1,
         description=(
             "Maximum number of tool calls to execute concurrently per agent "
-            "step. 1 = sequential (default)."
+            "step. Default 2 allows independent reads to overlap; set 1 for "
+            "fully sequential execution."
         ),
     )
 

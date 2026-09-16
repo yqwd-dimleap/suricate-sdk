@@ -348,7 +348,18 @@ def _make_agent(skills: list[Skill]) -> Agent:
         pytest.param(
             [_make_skill("legacy", is_agentskills_format=False)],
             False,
-            id="only-legacy-skill",
+            id="only-legacy-repo-skill",
+        ),
+        pytest.param(
+            [
+                _make_skill(
+                    "legacy-triggered",
+                    is_agentskills_format=False,
+                    trigger=KeywordTrigger(keywords=["pdf"]),
+                )
+            ],
+            True,
+            id="legacy-triggered-listed",
         ),
         pytest.param(
             [_make_skill("frontend-design", is_agentskills_format=True)],
@@ -383,8 +394,8 @@ def _make_agent(skills: list[Skill]) -> Agent:
 def test_agent_auto_attaches_invoke_skill_tool(
     skills: list[Skill], expect_attached: bool, tmp_path
 ):
-    """`Agent._initialize` must attach `invoke_skill` iff an AgentSkills-format
-    skill is loaded — regardless of what's in `include_default_tools`."""
+    """`Agent._initialize` must attach `invoke_skill` iff the available-skills
+    catalog would list a skill — same rules as AgentContext._partition_skills."""
     agent = _make_agent(skills)
     state = ConversationState.create(
         id=uuid.uuid4(),

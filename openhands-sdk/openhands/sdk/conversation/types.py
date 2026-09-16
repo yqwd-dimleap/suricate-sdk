@@ -145,6 +145,9 @@ class StuckDetectionThresholds(BaseModel):
             monologue detection
         alternating_pattern: Number of repetitions before triggering
             alternating pattern detection
+        no_progress_actions: Consecutive non-mutating actions before emitting a
+            corrective nudge (0 disables). Mutating = ``finish`` or
+            ``file_editor`` write commands (str_replace/create/insert).
     """
 
     action_observation: int = Field(
@@ -158,4 +161,13 @@ class StuckDetectionThresholds(BaseModel):
     )
     alternating_pattern: int = Field(
         default=6, ge=1, description="Threshold for alternating pattern detection"
+    )
+    no_progress_actions: int = Field(
+        default=12,
+        ge=0,
+        description=(
+            "Emit a one-shot nudge after this many consecutive non-mutating "
+            "actions (explore/read/think without file edits or finish). "
+            "0 disables. Does not mark the conversation STUCK."
+        ),
     )

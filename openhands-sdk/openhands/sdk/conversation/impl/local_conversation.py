@@ -205,6 +205,7 @@ class LocalConversation(BaseConversation):
     _plugins_loaded: bool
     _pending_hook_config: HookConfig | None  # Hook config to combine with plugin hooks
     _mcp_tool_provider: MCPToolProvider
+    _finish_nudge_emitted: bool
 
     def __init__(
         self,
@@ -313,6 +314,7 @@ class LocalConversation(BaseConversation):
         self._cancel_token = None
         self._prompt_cache_key = prompt_cache_key
         self._step_holds_state_lock = False
+        self._finish_nudge_emitted = False
 
         # Store plugin specs for lazy loading (no IO in constructor)
         # Plugins will be loaded on first run() or send_message() call
@@ -751,12 +753,63 @@ class LocalConversation(BaseConversation):
             )
             return False
 
+        no_progress = self._stuck_detector.get_no_progress_nudge()
+        if no_progress is not None:
+            self._on_event(
+                MessageEvent(
+                    source="environment",
+                    llm_message=Message(
+                        role="user", content=[TextContent(text=no_progress)]
+                    ),
+                )
+            )
+            return False
+
         if self._stuck_detector.is_stuck():
             logger.warning("Stuck pattern detected.")
             self._state.execution_status = ConversationExecutionStatus.STUCK
             return True
 
         return False
+
+    def _maybe_emit_finish_nudge(self, iteration: int) -> None:
+        """Once per run, remind the agent to finish when iterations are nearly spent.
+
+        Threshold: remaining steps <= max(3, max_iteration_per_run // 10).
+        Skipped when already finished or when FinishTool is not available.
+        """
+        if self._finish_nudge_emitted:
+            return
+        if self._state.execution_status == ConversationExecutionStatus.FINISHED:
+            return
+        max_iters = self.max_iteration_per_run
+        if max_iters <= 0:
+            return
+        remaining = max_iters - iteration
+        threshold = max(3, max_iters // 10)
+        if remaining <= 0 or remaining > threshold:
+            return
+        # Only nudge when the agent can actually call finish.
+        try:
+            has_finish = "finish" in self.agent.tools_map
+        except Exception:
+            has_finish = False
+        if not has_finish:
+            return
+
+        text = (
+            f"[Iteration budget] {remaining} iteration(s) remaining "
+            f"(limit {max_iters}). If the task is already verified or clearly "
+            "blocked, call `finish` now instead of further exploration."
+        )
+        self._on_event(
+            MessageEvent(
+                source="environment",
+                llm_message=Message(role="user", content=[TextContent(text=text)]),
+            )
+        )
+        self._finish_nudge_emitted = True
+        logger.info("Emitted near-limit finish nudge (%s remaining)", remaining)
 
     @property
     def stuck_detector(self) -> StuckDetector | None:
@@ -1403,11 +1456,7 @@ class LocalConversation(BaseConversation):
     def _runtime_skill_tools_for_agent(self) -> list[ToolDefinition]:
         agent_context = self.agent.agent_context
         has_invocable_skills = bool(
-            agent_context
-            and any(
-                skill.is_agentskills_format and not skill.disable_model_invocation
-                for skill in agent_context.skills
-            )
+            agent_context and agent_context.has_listed_invocable_skills()
         )
         if has_invocable_skills and InvokeSkillTool.name not in self.agent.tools_map:
             return list(InvokeSkillTool.create(self._state))
@@ -1932,6 +1981,7 @@ class LocalConversation(BaseConversation):
         # Ensure agent is fully initialized (loads plugins and initializes agent)
         self._ensure_agent_ready()
         self._cancel_token = CancellationToken()
+        self._finish_nudge_emitted = False
 
         with self._state:
             if self._state.execution_status in [
@@ -2003,6 +2053,7 @@ class LocalConversation(BaseConversation):
                     # Mark the step as holding the state lock so state-mutating
                     # tools (e.g. switch_llm) running on worker threads skip
                     # re-acquiring it instead of deadlocking (#3485).
+                    self._maybe_emit_finish_nudge(iteration)
                     self._step_holds_state_lock = True
                     try:
                         self.agent.step(
@@ -2108,6 +2159,7 @@ class LocalConversation(BaseConversation):
         """
         self._arun_task = asyncio.current_task()
         self._cancel_token = CancellationToken()
+        self._finish_nudge_emitted = False
         # Off-load lazy init to a worker thread: init_state may block the loop
         # (an ACP agent resolves credentials via a synchronous LookupSecret
         # httpx.get). When the agent-server runs arun() on its event loop and
@@ -2259,6 +2311,7 @@ class LocalConversation(BaseConversation):
                         # state-mutating tools (e.g. switch_llm) running on
                         # worker threads skip re-acquiring it instead of
                         # deadlocking while this await holds it (#3485).
+                        self._maybe_emit_finish_nudge(iteration)
                         self._step_holds_state_lock = True
                         last_user_message_id = self._state.last_user_message_id
                         try:

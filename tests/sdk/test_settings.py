@@ -88,7 +88,7 @@ def test_llm_agent_settings_export_schema_groups_sections() -> None:
         general_fields["enable_switch_llm_tool"].prominence is SettingProminence.MINOR
     )
     assert general_fields["tool_concurrency_limit"].value_type == "integer"
-    assert general_fields["tool_concurrency_limit"].default == 1
+    assert general_fields["tool_concurrency_limit"].default == 2
     assert (
         general_fields["tool_concurrency_limit"].prominence is SettingProminence.MAJOR
     )
@@ -967,7 +967,7 @@ def test_llm_create_agent_uses_settings_llm_and_tools() -> None:
 
 def test_llm_create_agent_defaults_tool_concurrency_limit_to_one() -> None:
     agent = OpenHandsAgentSettings(llm=LLM(model="test-model")).create_agent()
-    assert agent.tool_concurrency_limit == 1
+    assert agent.tool_concurrency_limit == 2
 
 
 def test_create_agent_defaults_tools_when_none() -> None:
@@ -1005,7 +1005,7 @@ def test_tool_concurrency_limit_defaults_to_one_when_omitted_from_payload() -> N
     # Backward compatibility: payloads persisted before the field existed must
     # still load and fall back to the sequential default.
     settings = OpenHandsAgentSettings.model_validate({"agent_kind": "openhands"})
-    assert settings.tool_concurrency_limit == 1
+    assert settings.tool_concurrency_limit == 2
 
 
 @pytest.mark.parametrize(

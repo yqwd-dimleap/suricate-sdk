@@ -176,6 +176,33 @@ class TestAgentContext:
         assert "<REPO_CONTEXT>" in result
         assert "Legacy repo rules content" in result
 
+    def test_max_listed_skills_truncates_prompt_but_keeps_skills_loaded(self):
+        """max_listed_skills caps the prompt index; omitted skills stay resolvable."""
+        skills = [
+            Skill(
+                name=f"skill-{i}",
+                content=f"content-{i}",
+                description=f"Description {i}",
+                source=f"/skills/skill-{i}/SKILL.md",
+                is_agentskills_format=True,
+            )
+            for i in range(5)
+        ]
+        context = AgentContext(skills=skills, max_listed_skills=2)
+        assert context.has_listed_invocable_skills() is True
+        listed, omitted = context.skills_for_available_prompt()
+        assert [s.name for s in listed] == ["skill-0", "skill-1"]
+        assert omitted == 3
+
+        result = context.get_system_message_suffix()
+        assert result is not None
+        assert "<name>skill-0</name>" in result
+        assert "<name>skill-1</name>" in result
+        assert "<name>skill-2</name>" not in result
+        assert "3 additional skill(s) are loaded but not listed" in result
+        # Full skill objects remain on the context for invoke_skill.
+        assert {s.name for s in context.skills} == {f"skill-{i}" for i in range(5)}
+
     def test_disable_model_invocation_hides_skill_but_preserves_triggers(self):
         """Disabled skills should not be advertised for invoke_skill, but their
         trigger-based activation still works."""

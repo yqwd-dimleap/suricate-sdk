@@ -45,7 +45,15 @@ class LLMSummarizingCondenser(RollingCondenser):
     """
 
     llm: LLM
-    max_size: int = Field(default=240, gt=0)
+    max_size: int = Field(
+        default=100,
+        gt=0,
+        description=(
+            "Maximum number of events in the view before event-based condensation "
+            "triggers. Default 100 balances retention with timely compression "
+            "(previously 240, which often never fired in typical coding runs)."
+        ),
+    )
     max_tokens: int | None = None
 
     keep_first: int = Field(default=2, ge=0)

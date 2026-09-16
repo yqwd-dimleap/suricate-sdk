@@ -168,6 +168,20 @@ class AgentContext(BaseModel):
         ),
         json_schema_extra={"acp_compatible": True},
     )
+    max_listed_skills: int | None = Field(
+        default=None,
+        ge=1,
+        description=(
+            "Optional cap on how many skills appear in the <available_skills> "
+            "prompt block (progressive disclosure index). None (default) lists "
+            "every invocable skill for backward compatibility. When set, only "
+            "the first N skills (stable load order) are listed and a note tells "
+            "the model that more exist and can still be invoked by name. "
+            "Does not unload skills from `skills` — invoke_skill still resolves "
+            "any loaded skill."
+        ),
+        json_schema_extra={"acp_compatible": True},
+    )
     disabled_skills: list[str] = Field(
         default_factory=list,
         description=(
@@ -349,6 +363,45 @@ class AgentContext(BaseModel):
                 repo_skills.append(s)
         return repo_skills, available_skills
 
+    def listed_invocable_skills(self) -> list[Skill]:
+        """Skills that belong in the ``<available_skills>`` index.
+
+        Same membership rules as :meth:`_partition_skills`'s available list.
+        Does **not** apply ``max_listed_skills`` — callers that build the prompt
+        should use :meth:`skills_for_available_prompt`.
+        """
+        return self._partition_skills()[1]
+
+    def has_listed_invocable_skills(self) -> bool:
+        """True when the prompt would advertise at least one invocable skill.
+
+        Used to decide whether to attach ``invoke_skill`` so the catalog and
+        tool stay coherent (legacy triggered skills are listed too, not only
+        AgentSkills-format).
+        """
+        return bool(self.listed_invocable_skills())
+
+    def skills_for_available_prompt(self) -> tuple[list[Skill], int]:
+        """Skills to render in ``<available_skills>``, plus how many were omitted.
+
+        Returns:
+            ``(skills_to_list, omitted_count)``. Omitted skills remain loaded and
+            resolvable via ``invoke_skill(name=...)``.
+        """
+        available = self.listed_invocable_skills()
+        if self.max_listed_skills is None or len(available) <= self.max_listed_skills:
+            return available, 0
+        listed = available[: self.max_listed_skills]
+        omitted = len(available) - len(listed)
+        logger.info(
+            "Truncating available-skills prompt from %d to %d "
+            "(max_listed_skills=%d); omitted skills remain invocable by name",
+            len(available),
+            len(listed),
+            self.max_listed_skills,
+        )
+        return listed, omitted
+
     def get_system_message_suffix(
         self,
         llm_model: str | None = None,
@@ -426,10 +479,19 @@ class AgentContext(BaseModel):
         logger.debug(f"Loaded {len(repo_skills)} repository skills: {repo_skills}")
 
         available_skills_prompt = ""
-        if available_skills:
-            available_skills_prompt = to_prompt(available_skills)
+        listed_skills, omitted = self.skills_for_available_prompt()
+        if listed_skills or omitted:
+            available_skills_prompt = to_prompt(listed_skills)
+            if omitted > 0:
+                available_skills_prompt += (
+                    f"\n<!-- {omitted} additional skill(s) are loaded but not listed "
+                    "above. Call invoke_skill(name=\"...\") with a known skill name "
+                    "to load any of them. -->"
+                )
             logger.debug(
-                f"Generated available skills prompt for {len(available_skills)} skills"
+                "Generated available skills prompt for %d skills (%d omitted from list)",
+                len(listed_skills),
+                omitted,
             )
 
         # Merge agent_context secrets with additional secrets from the registry

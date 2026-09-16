@@ -291,11 +291,12 @@ class AgentBase(DiscriminatedUnionMixin, ABC):
     )
 
     tool_concurrency_limit: int = Field(
-        default=1,
+        default=2,
         ge=1,
         description=(
             "Maximum number of tool calls to execute concurrently within a single "
-            "agent step. Default is 1 (sequential). Values > 1 enable parallel "
+            "agent step. Default is 2 so independent read-only tools can overlap. "
+            "Set to 1 for fully sequential execution. Values > 1 enable parallel "
             "execution; concurrent tools share the conversation object, filesystem, "
             "and working directory, so mutations to shared state may race."
         ),
@@ -569,23 +570,21 @@ class AgentBase(DiscriminatedUnionMixin, ABC):
 
         # Include default tools from include_default_tools; not subject to regex
         # filtering. Use explicit mapping to resolve tool class names.
-        # Auto-attach `InvokeSkillTool` iff an AgentSkills-format skill is
-        # directly invocable and the user hasn't already opted in explicitly.
-        has_invocable_agentskills = bool(
-            self.agent_context
-            and any(
-                s.is_agentskills_format and not s.disable_model_invocation
-                for s in self.agent_context.skills
-            )
+        # Auto-attach `InvokeSkillTool` iff the <available_skills> catalog would
+        # list at least one invocable skill (AgentSkills-format or legacy with
+        # triggers), matching AgentContext._partition_skills. Keep coherent with
+        # the prompt so we never advertise invoke_skill without attaching it.
+        has_invocable_listed_skills = bool(
+            self.agent_context and self.agent_context.has_listed_invocable_skills()
         )
         default_tool_names = list(self.include_default_tools)
         if (
-            has_invocable_agentskills
+            has_invocable_listed_skills
             and InvokeSkillTool.__name__ not in default_tool_names
         ):
             default_tool_names.append(InvokeSkillTool.__name__)
             logger.debug(
-                "Auto-attached %s (invocable AgentSkills-format skill present)",
+                "Auto-attached %s (listed invocable skill present)",
                 InvokeSkillTool.__name__,
             )
         if (

@@ -1527,7 +1527,7 @@ class Agent(CriticMixin, ResponseDispatchMixin, AgentBase):
             "      llm=LLM(model='your-model'),\n"
             "      condenser=LLMSummarizingCondenser(\n"
             "          llm=LLM(model='your-model'),\n"
-            "          max_size=240,\n"
+            "          max_size=100,\n"
             "          keep_first=2\n"
             "      )\n"
             "  )\n"

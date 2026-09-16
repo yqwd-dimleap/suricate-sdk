@@ -116,7 +116,7 @@ def test_default_values(mock_llm: LLM) -> None:
     condenser = LLMSummarizingCondenser(llm=mock_llm)
 
     # Default max_size should be 240 (raised from 120 to allow more room for tool loops)
-    assert condenser.max_size == 240
+    assert condenser.max_size == 100
 
     # Default keep_first should be 2 (reduced from 4 to leave more room for
     # condensation)

@@ -167,12 +167,13 @@ class EfficiencySection(_StaticTextSection):
     name = "efficiency"
     body = """\
 <EFFICIENCY>
-* Each action you take is somewhat expensive. Wherever possible, combine multiple actions into a single action, e.g. combine multiple bash commands into one, using sed and grep to edit/view multiple files at once.
-* When exploring the codebase, use efficient tools like find, grep, and git commands with appropriate filters to minimize unnecessary operations.
+* Each action you take is somewhat expensive. Prefer the shortest path to a working fix.
+* Combine independent read-only checks when possible (e.g. multiple greps or views in one step). Prefer targeted search (grep/find with filters) over reading large files end-to-end. On Unix, prefer bash one-liners over many tiny steps.
+* Do not spend iterations on open-ended archaeology (broad git history walks, unrelated files) once you can reproduce the issue and locate a likely root cause.
+* When verification succeeds (repro fixed / relevant tests pass), call `finish` promptly instead of continuing to explore.
 </EFFICIENCY>"""
 
     def render(self, ctx: PromptContext) -> str | None:
-        # Mentions "bash", which refine() rewrites to "powershell" on Windows.
         return _refine(self.body, ctx.platform)
 
 
@@ -199,7 +200,7 @@ class CodeQualitySection(_StaticTextSection):
 * Write clean, efficient code with minimal comments. Avoid redundancy in comments: Do not repeat information that can be easily inferred from the code itself.
 * Only add a comment when the code expresses something genuinely unintuitive (a non-obvious invariant, a workaround, a subtle ordering/locking requirement, or a deliberate trade-off). Do NOT restate the code, narrate the diff/change history, or describe non-local behavior — that context belongs in the PR description or commit message, not in the source.
 * When implementing solutions, focus on making the minimal changes needed to solve the problem.
-* Before implementing any changes, first thoroughly understand the codebase through exploration.
+* Explore just enough to locate the root cause; do not delay a minimal fix for exhaustive codebase tours.
 * If you are adding a lot of code to a function or file, consider splitting the function or file into smaller pieces when appropriate.
 * Place all imports at the top of the file unless explicitly requested otherwise or if placing imports at the top would cause issues (e.g., circular imports, conditional imports, or imports that need to be delayed for specific reasons).
 </CODE_QUALITY>"""
@@ -234,20 +235,16 @@ class ProblemSolvingSection(_StaticTextSection):
     name = "problem_solving"
     body = """\
 <PROBLEM_SOLVING_WORKFLOW>
-1. EXPLORATION: Thoroughly explore relevant files and understand the context before proposing solutions
-2. ANALYSIS: Consider multiple approaches and select the most promising one
-3. TESTING:
-   * For bug fixes: Create tests to verify issues before implementing fixes
-   * For new features: Consider test-driven development when appropriate
-   * Do NOT write tests for documentation changes, README updates, configuration files, or other non-functionality changes
+1. ORIENT: Skim the issue and locate the most relevant files with targeted search (grep/find). Prefer depth over breadth.
+2. REPRODUCE: Run a minimal repro or the smallest relevant failing test before large edits.
+3. IMPLEMENT: Make the smallest focused change that addresses the root cause. Prefer editing existing files over creating new ones.
+4. VERIFY: Re-run the repro / targeted tests. If they pass, stop exploring side paths.
+5. FINISH: Call `finish` once the task is verified (or clearly blocked after a reasonable attempt). Do not burn remaining iterations on optional cleanup, unrelated refactors, or git history archaeology.
+Notes:
+   * Do NOT write tests for documentation changes, README updates, configuration files, or other non-functionality changes unless asked.
    * Do not use mocks in tests unless strictly necessary and justify their use when they are used. You must always test real code paths in tests, NOT mocks.
    * If the repository lacks testing infrastructure and implementing tests would require extensive setup, consult with the user before investing time in building testing infrastructure
    * If the environment is not set up to run tests, consult with the user first before investing time to install all dependencies
-4. IMPLEMENTATION:
-   * Make focused, minimal changes to address the problem
-   * Always modify existing files directly rather than creating new versions with different suffixes
-   * If you create temporary files for testing, delete them after confirming your solution works
-5. VERIFICATION: If the environment is set up to run tests, test your implementation thoroughly, including edge cases. If the environment is not set up to run tests, consult with the user first before investing time to run tests.
 </PROBLEM_SOLVING_WORKFLOW>"""
 
 

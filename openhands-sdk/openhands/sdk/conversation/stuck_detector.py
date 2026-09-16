@@ -1,3 +1,5 @@
+import json
+
 from openhands.sdk.conversation.state import ConversationState
 from openhands.sdk.conversation.types import StuckDetectionThresholds
 from openhands.sdk.event import (
@@ -18,7 +20,13 @@ logger = get_logger(__name__)
 # Maximum recent events to scan for stuck detection.
 # This window should be large enough to capture repetitive patterns
 # (4 repeats × 2 events per cycle = 8 events minimum, plus buffer for user messages)
-MAX_EVENTS_TO_SCAN_FOR_STUCK_DETECTION: int = 20
+# and no-progress exploration streaks (default threshold 12 actions).
+MAX_EVENTS_TO_SCAN_FOR_STUCK_DETECTION: int = 40
+
+# file_editor commands that count as making progress toward a code change
+_FILE_EDITOR_PROGRESS_COMMANDS = frozenset(
+    {"create", "str_replace", "insert", "undo_edit"}
+)
 
 
 class StuckDetector:
@@ -46,6 +54,9 @@ class StuckDetector:
         # (e.g. an empty/reasoning-only response that adds no new action)
         # doesn't re-emit the same nudge every iteration.
         self._last_nudged_error_event_id: str | None = None
+        # Id of the ActionEvent that completed a no-progress streak for which
+        # we already emitted a nudge (one-shot until progress resets the streak).
+        self._last_nudged_no_progress_action_id: str | None = None
 
     @property
     def action_observation_threshold(self) -> int:
@@ -62,6 +73,10 @@ class StuckDetector:
     @property
     def alternating_pattern_threshold(self) -> int:
         return self.thresholds.alternating_pattern
+
+    @property
+    def no_progress_actions_threshold(self) -> int:
+        return self.thresholds.no_progress_actions
 
     def _events_since_last_user_message(self) -> list[Event]:
         """Events in the scan window, after the last user message (if any).
@@ -245,6 +260,66 @@ class StuckDetector:
             f"time: {error.error}. Repeating the exact same call again "
             "will not work — review the error message and either correct "
             "the arguments or try a different approach."
+        )
+
+    @staticmethod
+    def _action_shows_code_progress(action: ActionEvent) -> bool:
+        """True if the action is a write/finish step (not pure exploration)."""
+        name = action.tool_name or ""
+        if name == "finish":
+            return True
+        if name != "file_editor":
+            return False
+        raw_args = ""
+        if action.tool_call is not None:
+            raw_args = action.tool_call.arguments or ""
+        if isinstance(raw_args, dict):
+            command = raw_args.get("command")
+        else:
+            try:
+                parsed = json.loads(raw_args) if raw_args else {}
+            except (TypeError, ValueError, json.JSONDecodeError):
+                return False
+            command = parsed.get("command") if isinstance(parsed, dict) else None
+        return command in _FILE_EDITOR_PROGRESS_COMMANDS
+
+    def get_no_progress_nudge(self) -> str | None:
+        """Nudge once after a long streak of explore-only actions.
+
+        Unlike ``is_stuck()``, this does not stop the run — it injects a user
+        message asking the agent to implement or finish. Disabled when
+        ``no_progress_actions`` is 0.
+        """
+        threshold = self.no_progress_actions_threshold
+        if threshold <= 0:
+            return None
+
+        events = self._events_since_last_user_message()
+        last_actions, _ = self._collect_actions_and_observations(events, threshold)
+        if len(last_actions) < threshold:
+            return None
+
+        streak = last_actions[:threshold]
+        if any(self._action_shows_code_progress(a) for a in streak):
+            # Progress inside the window — clear prior nudge marker so a later
+            # explore streak can nudge again.
+            self._last_nudged_no_progress_action_id = None
+            return None
+
+        newest = streak[0]
+        assert isinstance(newest, ActionEvent)
+        if newest.id == self._last_nudged_no_progress_action_id:
+            return None
+        self._last_nudged_no_progress_action_id = newest.id
+
+        tool_names = [a.tool_name or "?" for a in reversed(streak)]
+        return (
+            f"You've taken {threshold} consecutive explore/read actions "
+            f"({', '.join(tool_names[-5:])}"
+            f"{', …' if len(tool_names) > 5 else ''}) without editing code or "
+            "calling `finish`. Stop open-ended exploration: make a minimal "
+            "code change now, or call `finish` if the task is already verified "
+            "or blocked."
         )
 
     def _is_stuck_monologue(self, events: list[Event]) -> bool:

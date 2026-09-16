@@ -139,6 +139,10 @@ class SimpleBrowsingTest(BaseIntegrationTest):
         # The expected answer is "The answer is Suricate is all you need!"
         # We'll be flexible with the exact wording but look for key components
         answer_patterns = [
+            r"(?i)the answer is suricate is all you need",
+            r"(?i)suricate is all you need",
+            r"(?i)answer.*suricate.*all.*need",
+            # Accept legacy OpenHands wording if page content is not rebranded.
             r"(?i)the answer is openhands is all you need",
             r"(?i)openhands is all you need",
             r"(?i)answer.*openhands.*all.*need",
