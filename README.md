@@ -1,16 +1,8 @@
 # Suricate SDK
 
-Suricate SDK is a local fork of the **OpenHands Software Agent SDK**, providing Python / TypeScript / REST APIs for building agents that work with code.
+Suricate SDK provides Python / TypeScript / REST APIs for building agents that work with code.
 
-It is the agent runtime used with [Suricate Desktop](https://github.com/yqwd-dimleap/suricate-desktop) (Agent Canvas desktop shell).
-
-## Upstream
-
-- Source: [OpenHands/software-agent-sdk](https://github.com/OpenHands/software-agent-sdk)
-- License: MIT (see [LICENSE](./LICENSE))
-- Docs (upstream): [docs.openhands.dev/sdk](https://docs.openhands.dev/sdk)
-
-Python package import paths remain `openhands.*` / `openhands-*` for compatibility with the upstream ecosystem and PyPI package layout. Product branding in docs and UI uses **Suricate**.
+It is the agent runtime used with [Suricate Desktop](https://github.com/yqwd-dimleap/suricate-desktop).
 
 ## Packages (workspace)
 
@@ -52,7 +44,7 @@ conversation.send_message("Create a simple Python script that prints Hello World
 conversation.run()
 ```
 
-See upstream examples under `examples/` and [DEVELOPMENT.md](./DEVELOPMENT.md) for local setup.
+See `examples/` and [DEVELOPMENT.md](./DEVELOPMENT.md) for local setup.
 
 ## Related
 
