@@ -39,7 +39,7 @@ def mock_installed_skill_info():
         resolved_ref="abc123",
         repo_path=None,
         installed_at="2024-01-01T00:00:00Z",
-        install_path=Path("/home/user/.openhands/skills/installed/test-skill"),
+        install_path=Path("/home/user/.suricate/skills/installed/test-skill"),
     )
 
 
@@ -95,9 +95,9 @@ class TestGetSkillsEndpoint:
                     "load_org": True,
                     "org_configs": [
                         {
-                            "repository": "hieptl/.openhands",
+                            "repository": "hieptl/.suricate",
                             "provider": "github",
-                            "org_repo_url": "https://github.com/hieptl/.openhands",
+                            "org_repo_url": "https://github.com/hieptl/.suricate",
                             "org_name": "hieptl",
                         },
                         {
@@ -113,7 +113,7 @@ class TestGetSkillsEndpoint:
             assert response.status_code == 200
             mock_load.assert_called_once()
             assert mock_load.call_args[1]["org_repos"] == [
-                ("https://github.com/hieptl/.openhands", "hieptl"),
+                ("https://github.com/hieptl/.suricate", "hieptl"),
                 ("https://github.com/hieptl/.agents", "hieptl"),
             ]
 
@@ -472,7 +472,7 @@ class TestPydanticModels:
                         {
                             "repository": "org/repo",
                             "provider": "github",
-                            "org_repo_url": "https://github.com/org/.openhands",
+                            "org_repo_url": "https://github.com/org/.suricate",
                             "org_name": "org",
                         }
                     ]

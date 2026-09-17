@@ -52,15 +52,15 @@ def test_get_credentials_dir_default(monkeypatch):
     """Test default credentials directory."""
     monkeypatch.delenv("XDG_DATA_HOME", raising=False)
     creds_dir = get_credentials_dir()
-    assert creds_dir == Path.home() / ".openhands" / "auth"
+    assert creds_dir == Path.home() / ".suricate" / "auth"
 
 
 def test_get_credentials_dir_xdg(monkeypatch, tmp_path):
-    """Test credentials directory ignores XDG_DATA_HOME (uses ~/.openhands/auth)."""
+    """Test credentials directory ignores XDG_DATA_HOME (uses ~/.suricate/auth)."""
     monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
     creds_dir = get_credentials_dir()
-    # Implementation uses ~/.openhands/auth regardless of XDG_DATA_HOME
-    assert creds_dir == Path.home() / ".openhands" / "auth"
+    # Implementation uses ~/.suricate/auth regardless of XDG_DATA_HOME
+    assert creds_dir == Path.home() / ".suricate" / "auth"
 
 
 def test_credential_store_save_and_get(tmp_path):

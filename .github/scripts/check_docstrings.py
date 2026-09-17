@@ -19,7 +19,7 @@ from pathlib import Path
 
 # Directories to check
 SDK_PATHS = [
-    "openhands-sdk/openhands/sdk",
+    "suricate-sdk/openhands/sdk",
 ]
 
 # Files/directories to skip
@@ -199,7 +199,7 @@ def get_docstrings_from_file(file: Path) -> list[tuple[str, str, int]]:
 def is_strict_file(file: Path, repo_root: Path) -> bool:
     """Check if a file is in the strict check list."""
     try:
-        rel_path = file.relative_to(repo_root / "openhands-sdk/openhands/sdk")
+        rel_path = file.relative_to(repo_root / "suricate-sdk/openhands/sdk")
         return any(str(rel_path) == strict for strict in STRICT_CHECK_FILES)
     except ValueError:
         return False

@@ -1,6 +1,6 @@
 # UV workspace configuration
 [tool.uv.workspace]
-members = ["openhands-sdk", "openhands-tools", "openhands-workspace", "openhands-agent-server"]
+members = ["suricate-sdk", "suricate-tools", "suricate-workspace", "suricate-agent-server"]
 
 # Security: Apply workspace-wide dependency guardrails.
 [tool.uv]
@@ -20,10 +20,10 @@ constraint-dependencies = [
 
 # Workspace sources for intra-repo dependencies
 [tool.uv.sources]
-openhands-sdk = { workspace = true }
-openhands-tools = { workspace = true }
-openhands-workspace = { workspace = true }
-openhands-agent-server = { workspace = true }
+suricate-sdk = { workspace = true }
+suricate-tools = { workspace = true }
+suricate-workspace = { workspace = true }
+suricate-agent-server = { workspace = true }
 
 [dependency-groups]
 dev = [
@@ -107,19 +107,19 @@ markers = [
 # This is needed for VSCode to properly resolve imports across multiple packages in the monorepo
 [tool.pyright]
 include = [
-    "openhands-sdk",
-    "openhands-tools",
-    "openhands-workspace",
-    "openhands-agent-server",
+    "suricate-sdk",
+    "suricate-tools",
+    "suricate-workspace",
+    "suricate-agent-server",
     "examples",
     "tests",
     "scripts"
 ]
 extraPaths = [
-    "openhands-sdk",
-    "openhands-tools",
-    "openhands-workspace",
-    "openhands-agent-server"
+    "suricate-sdk",
+    "suricate-tools",
+    "suricate-workspace",
+    "suricate-agent-server"
 ]
 venvPath = "."
 venv = ".venv"

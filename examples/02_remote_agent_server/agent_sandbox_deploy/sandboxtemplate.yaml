@@ -1,10 +1,10 @@
 ---
 # SandboxTemplate that runs the Suricate agent server. See the canonical copy and
-# docs at openhands-workspace/openhands/workspace/agent_sandbox/.
+# docs at suricate-workspace/openhands/workspace/agent_sandbox/.
 apiVersion: extensions.agents.x-k8s.io/v1beta1
 kind: SandboxTemplate
 metadata:
-    name: openhands-agent-server
+    name: suricate-agent-server
     namespace: default
 spec:
     volumeClaimTemplates:

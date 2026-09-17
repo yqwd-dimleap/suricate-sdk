@@ -425,8 +425,8 @@ def temp_skills_dir_with_cursorrules():
     with tempfile.TemporaryDirectory() as temp_dir:
         root = Path(temp_dir)
 
-        # Create .openhands/skills directory structure
-        skills_dir = root / ".openhands" / "skills"
+        # Create .suricate/skills directory structure
+        skills_dir = root / ".suricate" / "skills"
         skills_dir.mkdir(parents=True, exist_ok=True)
 
         # Create .cursorrules file in repository root
@@ -475,8 +475,8 @@ def temp_skills_dir_with_context_files():
     with tempfile.TemporaryDirectory() as temp_dir:
         root = Path(temp_dir)
 
-        # Create .openhands/skills directory structure
-        skills_dir = root / ".openhands" / "skills"
+        # Create .suricate/skills directory structure
+        skills_dir = root / ".suricate" / "skills"
         skills_dir.mkdir(parents=True, exist_ok=True)
 
         # Create claude.md file in repository root (lowercase to match pattern)
@@ -540,8 +540,8 @@ def temp_skills_dir_with_uppercase_context_files():
     with tempfile.TemporaryDirectory() as temp_dir:
         root = Path(temp_dir)
 
-        # Create .openhands/skills directory structure
-        skills_dir = root / ".openhands" / "skills"
+        # Create .suricate/skills directory structure
+        skills_dir = root / ".suricate" / "skills"
         skills_dir.mkdir(parents=True, exist_ok=True)
 
         # Create CLAUDE.MD file in repository root (all uppercase)
@@ -606,8 +606,8 @@ def temp_skills_dir_with_large_context_file():
     with tempfile.TemporaryDirectory() as temp_dir:
         root = Path(temp_dir)
 
-        # Create .openhands/skills directory structure
-        skills_dir = root / ".openhands" / "skills"
+        # Create .suricate/skills directory structure
+        skills_dir = root / ".suricate" / "skills"
         skills_dir.mkdir(parents=True, exist_ok=True)
 
         # Create a very large CLAUDE.md file (15,000 chars, exceeds 10,000 limit)

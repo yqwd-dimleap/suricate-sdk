@@ -8,41 +8,41 @@ include pyproject.toml
 include uv.lock
 
 # ==============================================================================
-# openhands-sdk
+# suricate-sdk
 # ==============================================================================
-include openhands-sdk/pyproject.toml
-recursive-include openhands-sdk *.py
-recursive-include openhands-sdk *.j2
-recursive-include openhands-sdk py.typed
+include suricate-sdk/pyproject.toml
+recursive-include suricate-sdk *.py
+recursive-include suricate-sdk *.j2
+recursive-include suricate-sdk py.typed
 
 # ==============================================================================
-# openhands-tools
+# suricate-tools
 # ==============================================================================
-include openhands-tools/pyproject.toml
-recursive-include openhands-tools *.py
-recursive-include openhands-tools *.j2
-recursive-include openhands-tools py.typed
+include suricate-tools/pyproject.toml
+recursive-include suricate-tools *.py
+recursive-include suricate-tools *.j2
+recursive-include suricate-tools py.typed
 
 # ==============================================================================
-# openhands-workspace
+# suricate-workspace
 # ==============================================================================
-include openhands-workspace/pyproject.toml
-recursive-include openhands-workspace *.py
-recursive-include openhands-workspace py.typed
+include suricate-workspace/pyproject.toml
+recursive-include suricate-workspace *.py
+recursive-include suricate-workspace py.typed
 
 # ==============================================================================
-# openhands-agent-server
+# suricate-agent-server
 # ==============================================================================
-include openhands-agent-server/pyproject.toml
-recursive-include openhands-agent-server *.py
-recursive-include openhands-agent-server py.typed
+include suricate-agent-server/pyproject.toml
+recursive-include suricate-agent-server *.py
+recursive-include suricate-agent-server py.typed
 
 # Docker build files
-include openhands-agent-server/openhands/agent_server/docker/Dockerfile
-include openhands-agent-server/openhands/agent_server/docker/wallpaper.svg
+include suricate-agent-server/openhands/agent_server/docker/Dockerfile
+include suricate-agent-server/openhands/agent_server/docker/wallpaper.svg
 
 # PyInstaller spec
-include openhands-agent-server/openhands/agent_server/agent-server.spec
+include suricate-agent-server/openhands/agent_server/agent-server.spec
 
 # VSCode extensions
-recursive-include openhands-agent-server/openhands/agent_server/vscode_extensions *
+recursive-include suricate-agent-server/openhands/agent_server/vscode_extensions *

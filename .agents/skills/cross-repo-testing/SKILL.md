@@ -11,7 +11,7 @@ How to end-to-end test features that span `yqwd-dimleap/suricate-sdk` and `yqwd-
 
 | Repo | Role | What lives here |
 |------|------|-----------------|
-| [`software-agent-sdk`](https://github.com/yqwd-dimleap/suricate-sdk) | Agent core | `openhands-sdk`, `openhands-workspace`, `openhands-tools` packages. `OpenHandsCloudWorkspace` lives here. |
+| [`software-agent-sdk`](https://github.com/yqwd-dimleap/suricate-sdk) | Agent core | `suricate-sdk`, `suricate-workspace`, `suricate-tools` packages. `OpenHandsCloudWorkspace` lives here. |
 | [`Suricate`](https://github.com/yqwd-dimleap/suricate-desktop) | Cloud backend | FastAPI server (`openhands/app_server/`), sandbox management, auth, enterprise integrations. Deployed as OH Cloud. |
 | [`deploy`](https://github.com/yqwd-dimleap/deploy) | Infrastructure | Helm charts + GitHub Actions that build the enterprise Docker image and deploy to staging/production. |
 
@@ -51,7 +51,7 @@ In `software-agent-sdk`, implement the client code (e.g., new methods on `OpenHa
 
 ```bash
 cd software-agent-sdk
-pip install -e openhands-sdk -e openhands-workspace
+pip install -e suricate-sdk -e suricate-workspace
 pytest tests/ -v
 ```
 
@@ -86,14 +86,14 @@ In the `Suricate` repo PR, update 3 files + regenerate 3 lock files (see the `up
 **`pyproject.toml`** — pin all 3 SDK packages in **both** `dependencies` and `[tool.poetry.dependencies]`:
 ```toml
 # dependencies array (PEP 508)
-"openhands-sdk @ git+https://github.com/yqwd-dimleap/suricate-sdk.git@<COMMIT>#subdirectory=openhands-sdk",
-"openhands-agent-server @ git+https://github.com/yqwd-dimleap/suricate-sdk.git@<COMMIT>#subdirectory=openhands-agent-server",
-"openhands-tools @ git+https://github.com/yqwd-dimleap/suricate-sdk.git@<COMMIT>#subdirectory=openhands-tools",
+"suricate-sdk @ git+https://github.com/yqwd-dimleap/suricate-sdk.git@<COMMIT>#subdirectory=suricate-sdk",
+"suricate-agent-server @ git+https://github.com/yqwd-dimleap/suricate-sdk.git@<COMMIT>#subdirectory=suricate-agent-server",
+"suricate-tools @ git+https://github.com/yqwd-dimleap/suricate-sdk.git@<COMMIT>#subdirectory=suricate-tools",
 
 # [tool.poetry.dependencies]
-openhands-sdk = { git = "https://github.com/yqwd-dimleap/suricate-sdk.git", rev = "<COMMIT>", subdirectory = "openhands-sdk" }
-openhands-agent-server = { git = "https://github.com/yqwd-dimleap/suricate-sdk.git", rev = "<COMMIT>", subdirectory = "openhands-agent-server" }
-openhands-tools = { git = "https://github.com/yqwd-dimleap/suricate-sdk.git", rev = "<COMMIT>", subdirectory = "openhands-tools" }
+suricate-sdk = { git = "https://github.com/yqwd-dimleap/suricate-sdk.git", rev = "<COMMIT>", subdirectory = "suricate-sdk" }
+suricate-agent-server = { git = "https://github.com/yqwd-dimleap/suricate-sdk.git", rev = "<COMMIT>", subdirectory = "suricate-agent-server" }
+suricate-tools = { git = "https://github.com/yqwd-dimleap/suricate-sdk.git", rev = "<COMMIT>", subdirectory = "suricate-tools" }
 ```
 
 **`openhands/app_server/sandbox/sandbox_spec_service.py`** — use the SDK's merge-commit SHA:

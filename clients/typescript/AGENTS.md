@@ -60,7 +60,7 @@ This TypeScript client is based on the following source materials:
 
 ### 2. Python SDK Reference Implementation
 
-- **Source**: `openhands-sdk/` in this repository
+- **Source**: `suricate-sdk/` in this repository
 - **Key Components**:
   - `RemoteConversation` class - Main conversation management
   - `RemoteWorkspace` class - Workspace file operations
@@ -70,7 +70,7 @@ This TypeScript client is based on the following source materials:
 
 ### 3. Agent Server Implementation
 
-- **Source**: `openhands-agent-server/` in this repository
+- **Source**: `suricate-agent-server/` in this repository
 - **Purpose**: The actual server implementation that this client communicates with
 - **Usage**: Reference for understanding expected request/response formats and WebSocket event structures
 
@@ -255,7 +255,7 @@ src/hooks/
 **Integration Points:**
 
 - `CreateConversationRequest.hook_config` - Send hooks when creating a conversation
-- `RemoteConversation.loadHooks()` - Load hooks from server's `.openhands/hooks.json`
+- `RemoteConversation.loadHooks()` - Load hooks from server's `.suricate/hooks.json`
 - `RemoteConversation.getHookConfig()` - Get hooks from current conversation info
 - `HookExecutionEvent` - Received via WebSocket when hooks execute server-side
 

@@ -55,7 +55,7 @@ body:
           label: Steps to Reproduce
           description: Provide clear, step-by-step instructions to reproduce the bug.
           placeholder: |
-              1. Install openhands-sdk using pip
+              1. Install suricate-sdk using pip
               2. Import and create an agent instance
               3. Define a custom tool function
               4. Call agent.register_tool(custom_tool)
@@ -78,7 +78,7 @@ body:
       attributes:
           label: Installation Method
           description: How did you install the Suricate SDK?
-          placeholder: ex. pip install openhands-sdk, uv pip install openhands-sdk, pip install -e ., etc.
+          placeholder: ex. pip install suricate-sdk, uv pip install suricate-sdk, pip install -e ., etc.
 
     - type: input
       id: installation-other
@@ -91,7 +91,7 @@ body:
       id: sdk-version
       attributes:
           label: SDK Version
-          description: What version are you using? Check with `pip show openhands-sdk` or similar for other packages.
+          description: What version are you using? Check with `pip show suricate-sdk` or similar for other packages.
           placeholder: ex. 0.1.0, 0.2.0, main branch, commit hash, etc.
       validations:
           required: false

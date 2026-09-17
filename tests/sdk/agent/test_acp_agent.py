@@ -9307,7 +9307,7 @@ class TestACPFileSecretMaterialisation:
         )
         env = self._run_start(agent, state, conn=self._make_conn())
 
-        expected = Path(state.workspace.working_dir) / ".openhands" / "acp" / "codex"
+        expected = Path(state.workspace.working_dir) / ".suricate" / "acp" / "codex"
         assert Path(env["CODEX_HOME"]) == expected
         assert (expected / "auth.json").is_file()
 
@@ -9681,7 +9681,7 @@ class TestACPDataDirIsolation:
             env = self._H._run_start(agent, state, conn=self._H._make_conn())
         assert (
             Path(env["CODEX_HOME"])
-            == Path(state.workspace.working_dir) / ".openhands" / "acp" / "codex"
+            == Path(state.workspace.working_dir) / ".suricate" / "acp" / "codex"
         )
 
     def test_composes_with_materialised_codex_auth(self, tmp_path):

@@ -205,7 +205,7 @@ export class RemoteConversation implements IConversation {
   /**
    * Load hooks configuration from the server workspace.
    *
-   * This calls the server's hooks endpoint to read `.openhands/hooks.json`
+   * This calls the server's hooks endpoint to read `.suricate/hooks.json`
    * from the project directory.
    *
    * @param projectDir - Optional project directory path. Defaults to the workspace working dir.

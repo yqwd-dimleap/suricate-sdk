@@ -109,7 +109,7 @@ def live_server_env(
 
     # Ensure default config uses our file and disable any env key override
     monkeypatch.setenv("OPENHANDS_AGENT_SERVER_CONFIG_PATH", str(cfg_file))
-    monkeypatch.setenv("OH_PERSISTENCE_DIR", str(tmp_path / ".openhands"))
+    monkeypatch.setenv("OH_PERSISTENCE_DIR", str(tmp_path / ".suricate"))
     monkeypatch.delenv("SESSION_API_KEY", raising=False)
 
     if import_modules is not None:

@@ -1218,13 +1218,13 @@ export type AgentContextInput = {
   /**
    * Load Memory
    *
-   * Whether to load persistent agent memory (MEMORY.md indexes under ~/.openhands/memory/ and <workspace>/.openhands/memory/) into the system prompt. Like load_project_skills, this flag is not resolved by AgentContext itself (the workspace path is unknown at validation time); LocalConversation resolves it lazily on the first send_message() / run() and stores the result in memory_context.
+   * Whether to load persistent agent memory (MEMORY.md indexes under ~/.suricate/memory/ and <workspace>/.suricate/memory/) into the system prompt. Like load_project_skills, this flag is not resolved by AgentContext itself (the workspace path is unknown at validation time); LocalConversation resolves it lazily on the first send_message() / run() and stores the result in memory_context.
    */
   load_memory?: boolean;
   /**
    * Load Project Skills
    *
-   * Whether to automatically load project skills from the conversation workspace (e.g. .openhands/skills/, AGENTS.md). Unlike load_user_skills / load_public_skills, this flag is not resolved by AgentContext itself (the workspace path is unknown at validation time); LocalConversation resolves it lazily on the first send_message() / run(), when the workspace is known. Also unlike load_user_skills / load_public_skills (which yield to explicit skills on a name conflict), resolved project skills are authoritative: a project skill overrides a same-named skill already present in `skills`.
+   * Whether to automatically load project skills from the conversation workspace (e.g. .suricate/skills/, AGENTS.md). Unlike load_user_skills / load_public_skills, this flag is not resolved by AgentContext itself (the workspace path is unknown at validation time); LocalConversation resolves it lazily on the first send_message() / run(), when the workspace is known. Also unlike load_user_skills / load_public_skills (which yield to explicit skills on a name conflict), resolved project skills are authoritative: a project skill overrides a same-named skill already present in `skills`.
    */
   load_project_skills?: boolean;
   /**
@@ -1236,7 +1236,7 @@ export type AgentContextInput = {
   /**
    * Load User Skills
    *
-   * Whether to automatically load user skills from ~/.openhands/skills/ and ~/.openhands/microagents/ (for backward compatibility).
+   * Whether to automatically load user skills from ~/.suricate/skills/ and ~/.suricate/microagents/ (for backward compatibility).
    */
   load_user_skills?: boolean;
   /**
@@ -1324,13 +1324,13 @@ export type AgentContextOutput = {
   /**
    * Load Memory
    *
-   * Whether to load persistent agent memory (MEMORY.md indexes under ~/.openhands/memory/ and <workspace>/.openhands/memory/) into the system prompt. Like load_project_skills, this flag is not resolved by AgentContext itself (the workspace path is unknown at validation time); LocalConversation resolves it lazily on the first send_message() / run() and stores the result in memory_context.
+   * Whether to load persistent agent memory (MEMORY.md indexes under ~/.suricate/memory/ and <workspace>/.suricate/memory/) into the system prompt. Like load_project_skills, this flag is not resolved by AgentContext itself (the workspace path is unknown at validation time); LocalConversation resolves it lazily on the first send_message() / run() and stores the result in memory_context.
    */
   load_memory?: boolean;
   /**
    * Load Project Skills
    *
-   * Whether to automatically load project skills from the conversation workspace (e.g. .openhands/skills/, AGENTS.md). Unlike load_user_skills / load_public_skills, this flag is not resolved by AgentContext itself (the workspace path is unknown at validation time); LocalConversation resolves it lazily on the first send_message() / run(), when the workspace is known. Also unlike load_user_skills / load_public_skills (which yield to explicit skills on a name conflict), resolved project skills are authoritative: a project skill overrides a same-named skill already present in `skills`.
+   * Whether to automatically load project skills from the conversation workspace (e.g. .suricate/skills/, AGENTS.md). Unlike load_user_skills / load_public_skills, this flag is not resolved by AgentContext itself (the workspace path is unknown at validation time); LocalConversation resolves it lazily on the first send_message() / run(), when the workspace is known. Also unlike load_user_skills / load_public_skills (which yield to explicit skills on a name conflict), resolved project skills are authoritative: a project skill overrides a same-named skill already present in `skills`.
    */
   load_project_skills?: boolean;
   /**
@@ -1342,7 +1342,7 @@ export type AgentContextOutput = {
   /**
    * Load User Skills
    *
-   * Whether to automatically load user skills from ~/.openhands/skills/ and ~/.openhands/microagents/ (for backward compatibility).
+   * Whether to automatically load user skills from ~/.suricate/skills/ and ~/.suricate/microagents/ (for backward compatibility).
    */
   load_user_skills?: boolean;
   /**
@@ -4466,7 +4466,7 @@ export type FallbackStrategy = {
   /**
    * Profile Store Dir
    *
-   * Path to directory containing profiles. If not specified, defaults to `.openhands/profiles`.
+   * Path to directory containing profiles. If not specified, defaults to `.suricate/profiles`.
    */
   profile_store_dir?: string | string | null;
 };
@@ -5258,7 +5258,7 @@ export type HomeResponse = {
  *
  * Configuration for all hooks.
  *
- * Hooks can be configured either by loading from `.openhands/hooks.json` or
+ * Hooks can be configured either by loading from `.suricate/hooks.json` or
  * by directly instantiating with typed fields:
  *
  * # Direct instantiation with typed fields (recommended):
@@ -5272,7 +5272,7 @@ export type HomeResponse = {
  * )
  *
  * # Load from JSON file:
- * config = HookConfig.load(".openhands/hooks.json")
+ * config = HookConfig.load(".suricate/hooks.json")
  */
 export type HookConfigInput = {
   /**
@@ -5318,7 +5318,7 @@ export type HookConfigInput = {
  *
  * Configuration for all hooks.
  *
- * Hooks can be configured either by loading from `.openhands/hooks.json` or
+ * Hooks can be configured either by loading from `.suricate/hooks.json` or
  * by directly instantiating with typed fields:
  *
  * # Direct instantiation with typed fields (recommended):
@@ -5332,7 +5332,7 @@ export type HookConfigInput = {
  * )
  *
  * # Load from JSON file:
- * config = HookConfig.load(".openhands/hooks.json")
+ * config = HookConfig.load(".suricate/hooks.json")
  */
 export type HookConfigOutput = {
   /**
@@ -10975,7 +10975,7 @@ export type SkillsRequest = {
   /**
    * Load User
    *
-   * Load user skills from ~/.openhands/skills/
+   * Load user skills from ~/.suricate/skills/
    */
   load_user?: boolean;
   /**
@@ -11174,7 +11174,7 @@ export type StartConversationRequest = {
   /**
    * Title Llm Profile
    *
-   * Optional LLM profile name for title generation. If set, the LLM is loaded from LLMProfileStore (~/.openhands/profiles/) and used for LLM-based title generation. This enables using a fast/cheap model for titles regardless of the agent's main model. If not set (or profile loading fails), title generation falls back to the agent's LLM.
+   * Optional LLM profile name for title generation. If set, the LLM is loaded from LLMProfileStore (~/.suricate/profiles/) and used for LLM-based title generation. This enables using a fast/cheap model for titles regardless of the agent's main model. If not set (or profile loading fails), title generation falls back to the agent's LLM.
    */
   title_llm_profile?: string | null;
   /**
@@ -11465,7 +11465,7 @@ export type SubAgentsRequest = {
   /**
    * Load User
    *
-   * Load user agents from ~/.agents/agents and ~/.openhands/agents
+   * Load user agents from ~/.agents/agents and ~/.suricate/agents
    */
   load_user?: boolean;
   /**
@@ -12728,7 +12728,7 @@ export type ToolExecution = {
  *
  * By default the analyzer runs as a bare guardrail (no distilled
  * safety experiences). To enable the ToolShield seed, install
- * ``pip install openhands-sdk[toolshield]`` and pass the rendered
+ * ``pip install suricate-sdk[toolshield]`` and pass the rendered
  * experiences via the ``safety_experiences`` field -- typically via
  * one of the helpers (``default_safety_experiences()``,
  * ``load_safety_experiences(...)``, ``auto_detect_safety_experiences()``).
@@ -12785,7 +12785,7 @@ export type ToolShieldLlmSecurityAnalyzerInput = {
    *
    * Pre-generated safety guidelines injected into the guardrail's system prompt.
    * - ``""`` (default): bare guardrail -- no experiences. The analyzer still separates actor from judge; it just classifies without distilled tool-specific guidance.
-   * - Any non-empty string: used as-is. The intended pattern is to call one of the helpers (``default_safety_experiences()``, ``load_safety_experiences(tool_names)``, ``auto_detect_safety_experiences()``) which require the ``[toolshield]`` optional extra (``pip install openhands-sdk[toolshield]``). Callers with their own source of guidelines can pass any custom string.
+   * - Any non-empty string: used as-is. The intended pattern is to call one of the helpers (``default_safety_experiences()``, ``load_safety_experiences(tool_names)``, ``auto_detect_safety_experiences()``) which require the ``[toolshield]`` optional extra (``pip install suricate-sdk[toolshield]``). Callers with their own source of guidelines can pass any custom string.
    */
   safety_experiences?: string;
 };
@@ -12801,7 +12801,7 @@ export type ToolShieldLlmSecurityAnalyzerInput = {
  *
  * By default the analyzer runs as a bare guardrail (no distilled
  * safety experiences). To enable the ToolShield seed, install
- * ``pip install openhands-sdk[toolshield]`` and pass the rendered
+ * ``pip install suricate-sdk[toolshield]`` and pass the rendered
  * experiences via the ``safety_experiences`` field -- typically via
  * one of the helpers (``default_safety_experiences()``,
  * ``load_safety_experiences(...)``, ``auto_detect_safety_experiences()``).
@@ -12858,7 +12858,7 @@ export type ToolShieldLlmSecurityAnalyzerOutput = {
    *
    * Pre-generated safety guidelines injected into the guardrail's system prompt.
    * - ``""`` (default): bare guardrail -- no experiences. The analyzer still separates actor from judge; it just classifies without distilled tool-specific guidance.
-   * - Any non-empty string: used as-is. The intended pattern is to call one of the helpers (``default_safety_experiences()``, ``load_safety_experiences(tool_names)``, ``auto_detect_safety_experiences()``) which require the ``[toolshield]`` optional extra (``pip install openhands-sdk[toolshield]``). Callers with their own source of guidelines can pass any custom string.
+   * - Any non-empty string: used as-is. The intended pattern is to call one of the helpers (``default_safety_experiences()``, ``load_safety_experiences(tool_names)``, ``auto_detect_safety_experiences()``) which require the ``[toolshield]`` optional extra (``pip install suricate-sdk[toolshield]``). Callers with their own source of guidelines can pass any custom string.
    */
   safety_experiences?: string;
 };
@@ -14758,13 +14758,13 @@ export type AgentContextInputWritable = {
   /**
    * Load Memory
    *
-   * Whether to load persistent agent memory (MEMORY.md indexes under ~/.openhands/memory/ and <workspace>/.openhands/memory/) into the system prompt. Like load_project_skills, this flag is not resolved by AgentContext itself (the workspace path is unknown at validation time); LocalConversation resolves it lazily on the first send_message() / run() and stores the result in memory_context.
+   * Whether to load persistent agent memory (MEMORY.md indexes under ~/.suricate/memory/ and <workspace>/.suricate/memory/) into the system prompt. Like load_project_skills, this flag is not resolved by AgentContext itself (the workspace path is unknown at validation time); LocalConversation resolves it lazily on the first send_message() / run() and stores the result in memory_context.
    */
   load_memory?: boolean;
   /**
    * Load Project Skills
    *
-   * Whether to automatically load project skills from the conversation workspace (e.g. .openhands/skills/, AGENTS.md). Unlike load_user_skills / load_public_skills, this flag is not resolved by AgentContext itself (the workspace path is unknown at validation time); LocalConversation resolves it lazily on the first send_message() / run(), when the workspace is known. Also unlike load_user_skills / load_public_skills (which yield to explicit skills on a name conflict), resolved project skills are authoritative: a project skill overrides a same-named skill already present in `skills`.
+   * Whether to automatically load project skills from the conversation workspace (e.g. .suricate/skills/, AGENTS.md). Unlike load_user_skills / load_public_skills, this flag is not resolved by AgentContext itself (the workspace path is unknown at validation time); LocalConversation resolves it lazily on the first send_message() / run(), when the workspace is known. Also unlike load_user_skills / load_public_skills (which yield to explicit skills on a name conflict), resolved project skills are authoritative: a project skill overrides a same-named skill already present in `skills`.
    */
   load_project_skills?: boolean;
   /**
@@ -14776,7 +14776,7 @@ export type AgentContextInputWritable = {
   /**
    * Load User Skills
    *
-   * Whether to automatically load user skills from ~/.openhands/skills/ and ~/.openhands/microagents/ (for backward compatibility).
+   * Whether to automatically load user skills from ~/.suricate/skills/ and ~/.suricate/microagents/ (for backward compatibility).
    */
   load_user_skills?: boolean;
   /**
@@ -18257,7 +18257,7 @@ export type StartConversationRequestWritable = {
   /**
    * Title Llm Profile
    *
-   * Optional LLM profile name for title generation. If set, the LLM is loaded from LLMProfileStore (~/.openhands/profiles/) and used for LLM-based title generation. This enables using a fast/cheap model for titles regardless of the agent's main model. If not set (or profile loading fails), title generation falls back to the agent's LLM.
+   * Optional LLM profile name for title generation. If set, the LLM is loaded from LLMProfileStore (~/.suricate/profiles/) and used for LLM-based title generation. This enables using a fast/cheap model for titles regardless of the agent's main model. If not set (or profile loading fails), title generation falls back to the agent's LLM.
    */
   title_llm_profile?: string | null;
   /**
@@ -18908,7 +18908,7 @@ export type ToolDefinitionWritable =
  *
  * By default the analyzer runs as a bare guardrail (no distilled
  * safety experiences). To enable the ToolShield seed, install
- * ``pip install openhands-sdk[toolshield]`` and pass the rendered
+ * ``pip install suricate-sdk[toolshield]`` and pass the rendered
  * experiences via the ``safety_experiences`` field -- typically via
  * one of the helpers (``default_safety_experiences()``,
  * ``load_safety_experiences(...)``, ``auto_detect_safety_experiences()``).
@@ -18965,7 +18965,7 @@ export type ToolShieldLlmSecurityAnalyzerInputWritable = {
    *
    * Pre-generated safety guidelines injected into the guardrail's system prompt.
    * - ``""`` (default): bare guardrail -- no experiences. The analyzer still separates actor from judge; it just classifies without distilled tool-specific guidance.
-   * - Any non-empty string: used as-is. The intended pattern is to call one of the helpers (``default_safety_experiences()``, ``load_safety_experiences(tool_names)``, ``auto_detect_safety_experiences()``) which require the ``[toolshield]`` optional extra (``pip install openhands-sdk[toolshield]``). Callers with their own source of guidelines can pass any custom string.
+   * - Any non-empty string: used as-is. The intended pattern is to call one of the helpers (``default_safety_experiences()``, ``load_safety_experiences(tool_names)``, ``auto_detect_safety_experiences()``) which require the ``[toolshield]`` optional extra (``pip install suricate-sdk[toolshield]``). Callers with their own source of guidelines can pass any custom string.
    */
   safety_experiences?: string;
 };
@@ -18981,7 +18981,7 @@ export type ToolShieldLlmSecurityAnalyzerInputWritable = {
  *
  * By default the analyzer runs as a bare guardrail (no distilled
  * safety experiences). To enable the ToolShield seed, install
- * ``pip install openhands-sdk[toolshield]`` and pass the rendered
+ * ``pip install suricate-sdk[toolshield]`` and pass the rendered
  * experiences via the ``safety_experiences`` field -- typically via
  * one of the helpers (``default_safety_experiences()``,
  * ``load_safety_experiences(...)``, ``auto_detect_safety_experiences()``).
@@ -19038,7 +19038,7 @@ export type ToolShieldLlmSecurityAnalyzerOutputWritable = {
    *
    * Pre-generated safety guidelines injected into the guardrail's system prompt.
    * - ``""`` (default): bare guardrail -- no experiences. The analyzer still separates actor from judge; it just classifies without distilled tool-specific guidance.
-   * - Any non-empty string: used as-is. The intended pattern is to call one of the helpers (``default_safety_experiences()``, ``load_safety_experiences(tool_names)``, ``auto_detect_safety_experiences()``) which require the ``[toolshield]`` optional extra (``pip install openhands-sdk[toolshield]``). Callers with their own source of guidelines can pass any custom string.
+   * - Any non-empty string: used as-is. The intended pattern is to call one of the helpers (``default_safety_experiences()``, ``load_safety_experiences(tool_names)``, ``auto_detect_safety_experiences()``) which require the ``[toolshield]`` optional extra (``pip install suricate-sdk[toolshield]``). Callers with their own source of guidelines can pass any custom string.
    */
   safety_experiences?: string;
 };

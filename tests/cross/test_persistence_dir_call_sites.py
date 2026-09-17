@@ -1,11 +1,11 @@
 """Per-call-site coverage for ``OH_PERSISTENCE_DIR``.
 
-Every module that reads or writes user-level ``~/.openhands`` state must route
+Every module that reads or writes user-level ``~/.suricate`` state must route
 through :func:`openhands.sdk.utils.path.get_user_persistence_dir`, so that an
 enterprise ephemeral sandbox pointing ``OH_PERSISTENCE_DIR`` at a persistent
 volume keeps its data across a resume. This module asserts that contract at
 *each* call site rather than trusting the shared helper alone, which guards
-against a future edit reintroducing a bare ``Path.home() / ".openhands"``.
+against a future edit reintroducing a bare ``Path.home() / ".suricate"``.
 
 Two flavours of call site exist:
 
@@ -44,7 +44,7 @@ def _import_roots() -> list[str]:
     repo_root = Path(__file__).resolve().parents[2]
     roots = [
         str(repo_root / pkg)
-        for pkg in ("openhands-sdk", "openhands-tools", "openhands-agent-server")
+        for pkg in ("suricate-sdk", "suricate-tools", "suricate-agent-server")
     ]
     roots += list(sys.path)
     roots.append(site.getusersitepackages())
@@ -230,7 +230,7 @@ def test_import_time_constant_falls_back_to_home(
 ) -> None:
     home = Path(constants_with_home_fallback["__root__"])
     _mod, _attr, subpath = _IMPORT_TIME_CALL_SITES[name]
-    assert Path(constants_with_home_fallback[name]) == home / ".openhands" / subpath
+    assert Path(constants_with_home_fallback[name]) == home / ".suricate" / subpath
 
 
 @pytest.mark.parametrize("name", sorted(_AGENTS_DIR_CALL_SITES))
@@ -243,7 +243,7 @@ def test_agents_dir_call_sites_ignore_persistence_env(
     resolved = Path(constants_with_persistence_env[name])
     # Anchored at $HOME/.agents/..., never redirected into the persistence dir.
     assert resolved == home / subpath
-    assert ".openhands" not in resolved.parts
+    assert ".suricate" not in resolved.parts
 
 
 # --------------------------------------------------------------------------- #
@@ -400,7 +400,7 @@ def test_default_llm_profile_store_survives_resume() -> None:
         )
         assert r1.returncode == 0, r1.stderr
         assert (Path(persist) / "profiles" / "prod.json").is_file()
-        assert not (home1 / ".openhands").exists()
+        assert not (home1 / ".suricate").exists()
 
         # Resume: destroy the ephemeral HOME, hand run 2 a brand-new empty one.
         shutil.rmtree(home1)

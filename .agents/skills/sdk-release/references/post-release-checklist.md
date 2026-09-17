@@ -11,7 +11,7 @@ succeeds. It creates PRs in two repositories:
 ### Suricate-CLI (`Suricate/openhands-cli`)
 
 - Branch: `bump-sdk-<version>`
-- Updates `openhands-sdk` and `openhands-tools` via `uv add`
+- Updates `suricate-sdk` and `suricate-tools` via `uv add`
 - Verify the PR passes CLI tests before merging
 
 ```bash
@@ -22,7 +22,7 @@ gh pr list --repo Suricate/openhands-cli \
 ### Suricate (`All-Hands-AI/Suricate`)
 
 - Branch: `bump-sdk-<version>`
-- Updates `openhands-sdk`, `openhands-tools`, and `openhands-agent-server`
+- Updates `suricate-sdk`, `suricate-tools`, and `suricate-agent-server`
   in `pyproject.toml`
 - Regenerates `poetry.lock`
 - Updates `AGENT_SERVER_IMAGE` in `sandbox_spec_service.py`

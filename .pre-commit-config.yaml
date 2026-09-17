@@ -42,7 +42,7 @@ repos:
             name: Forbid dynamic attribute access in SDK
             entry: uv run python scripts/check_forbidden_dynamic_attributes.py
             language: system
-            files: ^openhands-sdk/.*\.py$
+            files: ^suricate-sdk/.*\.py$
             pass_filenames: false
             always_run: true
           - id: check-import-rules

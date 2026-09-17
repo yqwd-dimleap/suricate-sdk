@@ -58,12 +58,12 @@ tools.append(Tool(name=SleeptimeComputeTool.name, params=tom_params))
 
 # Create agent with Tom capabilities
 # This agent can consult Tom for personalized guidance
-# Note: Tom's user modeling data will be stored in ~/.openhands/
+# Note: Tom's user modeling data will be stored in ~/.suricate/
 agent: Agent = Agent(llm=llm, tools=tools)
 
 # Start conversation
 cwd: str = os.getcwd()
-PERSISTENCE_DIR = os.path.expanduser("~/.openhands")
+PERSISTENCE_DIR = os.path.expanduser("~/.suricate")
 CONVERSATIONS_DIR = os.path.join(PERSISTENCE_DIR, "conversations")
 conversation = Conversation(
     agent=agent, workspace=cwd, persistence_dir=CONVERSATIONS_DIR

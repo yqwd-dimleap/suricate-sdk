@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""REST API breakage detection for openhands-agent-server using oasdiff.
+"""REST API breakage detection for suricate-agent-server using oasdiff.
 
 This script compares the current OpenAPI schema for the public agent-server REST API
 (the `/api/**` surface) against an already-published release. The baseline version is
@@ -84,8 +84,8 @@ from openhands.agent_server.openapi import filter_public_openapi
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-AGENT_SERVER_PYPROJECT = REPO_ROOT / "openhands-agent-server" / "pyproject.toml"
-PYPI_DISTRIBUTION = "openhands-agent-server"
+AGENT_SERVER_PYPROJECT = REPO_ROOT / "suricate-agent-server" / "pyproject.toml"
+PYPI_DISTRIBUTION = "suricate-agent-server"
 # Keep this in sync with REST_ROUTE_DEPRECATION_RE in check_deprecations.py so
 # the REST breakage and deprecation checks recognize the same wording.
 REST_ROUTE_DEPRECATION_RE = re.compile(
@@ -124,10 +124,10 @@ from pathlib import Path
 
 source_tree = Path(sys.argv[1])
 sys.path = [
-    str(source_tree / "openhands-agent-server"),
-    str(source_tree / "openhands-sdk"),
-    str(source_tree / "openhands-tools"),
-    str(source_tree / "openhands-workspace"),
+    str(source_tree / "suricate-agent-server"),
+    str(source_tree / "suricate-sdk"),
+    str(source_tree / "suricate-tools"),
+    str(source_tree / "suricate-workspace"),
 ] + sys.path
 
 from openhands.agent_server.api import create_app
@@ -149,7 +149,7 @@ def _read_version_from_pyproject(pyproject: Path) -> str:
 def _fetch_pypi_metadata(distribution: str) -> dict:
     req = urllib.request.Request(
         url=f"https://pypi.org/pypi/{distribution}/json",
-        headers={"User-Agent": "openhands-agent-server-openapi-check/1.0"},
+        headers={"User-Agent": "suricate-agent-server-openapi-check/1.0"},
         method="GET",
     )
     with urllib.request.urlopen(req, timeout=10) as response:
@@ -320,7 +320,7 @@ def _find_sdk_deprecated_fastapi_routes_in_file(
 
 
 def _find_sdk_deprecated_fastapi_routes(repo_root: Path) -> list[str]:
-    app_root = repo_root / "openhands-agent-server" / "openhands" / "agent_server"
+    app_root = repo_root / "suricate-agent-server" / "openhands" / "agent_server"
     errors: list[str] = []
 
     for file_path in sorted(app_root.rglob("*.py")):

@@ -681,9 +681,9 @@ def generate_baseline_payloads(
     with tempfile.TemporaryDirectory(prefix="persisted-settings-baseline-") as tmp_dir:
         venv_dir = Path(tmp_dir) / "venv"
         python = _venv_python(venv_dir)
-        packages = [f"openhands-sdk=={sdk_version}"]
+        packages = [f"suricate-sdk=={sdk_version}"]
         if agent_server_version is not None:
-            packages.append(f"openhands-agent-server=={agent_server_version}")
+            packages.append(f"suricate-agent-server=={agent_server_version}")
 
         try:
             _uv_run(["uv", "venv", str(venv_dir), "--python", sys.executable])
@@ -736,11 +736,11 @@ def generate_baseline_payloads(
             cases.append(
                 BaselinePayloadCase(
                     source=(
-                        f"PyPI baseline openhands-sdk=={sdk_version}"
+                        f"PyPI baseline suricate-sdk=={sdk_version}"
                         if agent_server_version is None
                         else (
-                            f"PyPI baseline openhands-sdk=={sdk_version}, "
-                            f"openhands-agent-server=={agent_server_version}"
+                            f"PyPI baseline suricate-sdk=={sdk_version}, "
+                            f"suricate-agent-server=={agent_server_version}"
                         )
                     ),
                     key=key,
@@ -768,23 +768,23 @@ def validate_baseline_payload_cases(
 
 def _resolve_pypi_baselines() -> tuple[str | None, str | None, str | None]:
     sdk_current = read_version_from_pyproject(
-        REPO_ROOT / "openhands-sdk" / "pyproject.toml"
+        REPO_ROOT / "suricate-sdk" / "pyproject.toml"
     )
-    sdk_baseline = get_pypi_baseline_version("openhands-sdk", sdk_current)
+    sdk_baseline = get_pypi_baseline_version("suricate-sdk", sdk_current)
     if sdk_baseline is None:
         return None, None, None
 
-    cutoffs = [get_pypi_release_cutoff("openhands-sdk", sdk_baseline)]
+    cutoffs = [get_pypi_release_cutoff("suricate-sdk", sdk_baseline)]
     agent_server_current = read_version_from_pyproject(
-        REPO_ROOT / "openhands-agent-server" / "pyproject.toml"
+        REPO_ROOT / "suricate-agent-server" / "pyproject.toml"
     )
     agent_server_baseline = get_pypi_baseline_version(
-        "openhands-agent-server", agent_server_current
+        "suricate-agent-server", agent_server_current
     )
     if agent_server_baseline is not None:
         cutoffs.append(
             get_pypi_release_cutoff(
-                "openhands-agent-server",
+                "suricate-agent-server",
                 agent_server_baseline,
             )
         )
@@ -802,7 +802,7 @@ def main() -> int:
     sdk_baseline, agent_server_baseline, baseline_cutoff = _resolve_pypi_baselines()
     if sdk_baseline is None or baseline_cutoff is None:
         print(
-            "::warning title=Persisted settings baseline::No published openhands-sdk "
+            "::warning title=Persisted settings baseline::No published suricate-sdk "
             "baseline found; skipping PyPI payload generation"
         )
         return 0
@@ -813,9 +813,9 @@ def main() -> int:
         exclude_newer=baseline_cutoff,
     )
     validate_baseline_payload_cases(baseline_cases)
-    baseline_summary = f"openhands-sdk=={sdk_baseline}"
+    baseline_summary = f"suricate-sdk=={sdk_baseline}"
     if agent_server_baseline is not None:
-        baseline_summary += f", openhands-agent-server=={agent_server_baseline}"
+        baseline_summary += f", suricate-agent-server=={agent_server_baseline}"
     print(
         f"Validated {len(baseline_cases)} baseline payload(s) from PyPI release "
         f"{baseline_summary}"

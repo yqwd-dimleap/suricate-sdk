@@ -1,0 +1,37 @@
+[project]
+name = "suricate-workspace"
+version = "1.48.0"
+description = "Suricate Workspace - Docker and container-based workspace implementations"
+
+requires-python = ">=3.12"
+dependencies = [
+    "suricate-sdk",
+    "suricate-agent-server",
+    "pydantic>=2.11.7",
+]
+
+[project.optional-dependencies]
+# AgentSandboxWorkspace: run the agent server in a kubernetes-sigs/agent-sandbox pod.
+agent-sandbox = [
+    "k8s-agent-sandbox>=0.5.0",
+]
+
+[project.urls]
+Source = "https://github.com/yqwd-dimleap/suricate-sdk"
+Homepage = "https://github.com/yqwd-dimleap/suricate-sdk"
+Documentation = "https://docs.openhands.dev/sdk"
+"Bug Tracker" = "https://github.com/yqwd-dimleap/suricate-sdk/issues"
+
+[build-system]
+requires = ["setuptools>=83.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-dir]
+"" = "."
+
+[tool.setuptools.packages.find]
+include = ["openhands.workspace*"]
+namespaces = true
+
+[tool.setuptools.package-data]
+"*" = ["py.typed"]

@@ -160,7 +160,7 @@ def test_find_deprecation_policy_errors_ignores_non_deprecated_operations():
 
 def test_find_sdk_deprecated_fastapi_routes_in_file_flags_direct_import(tmp_path):
     repo_root = tmp_path
-    source = repo_root / "openhands-agent-server" / "openhands" / "agent_server"
+    source = repo_root / "suricate-agent-server" / "openhands" / "agent_server"
     source.mkdir(parents=True)
     file_path = source / "router.py"
     file_path.write_text(
@@ -175,7 +175,7 @@ def test_find_sdk_deprecated_fastapi_routes_in_file_flags_direct_import(tmp_path
     errors = _find_sdk_deprecated_fastapi_routes_in_file(file_path, repo_root)
 
     assert errors == [
-        "openhands-agent-server/openhands/agent_server/router.py:5 FastAPI route "
+        "suricate-agent-server/openhands/agent_server/router.py:5 FastAPI route "
         "`foo` uses openhands.sdk.utils.deprecation.deprecated; use the route "
         "decorator's deprecated=True flag instead."
     ]
@@ -183,7 +183,7 @@ def test_find_sdk_deprecated_fastapi_routes_in_file_flags_direct_import(tmp_path
 
 def test_find_sdk_deprecated_fastapi_routes_in_file_flags_alias_import(tmp_path):
     repo_root = tmp_path
-    source = repo_root / "openhands-agent-server" / "openhands" / "agent_server"
+    source = repo_root / "suricate-agent-server" / "openhands" / "agent_server"
     source.mkdir(parents=True)
     file_path = source / "router.py"
     file_path.write_text(
@@ -198,7 +198,7 @@ def test_find_sdk_deprecated_fastapi_routes_in_file_flags_alias_import(tmp_path)
     errors = _find_sdk_deprecated_fastapi_routes_in_file(file_path, repo_root)
 
     assert errors == [
-        "openhands-agent-server/openhands/agent_server/router.py:5 FastAPI route "
+        "suricate-agent-server/openhands/agent_server/router.py:5 FastAPI route "
         "`foo` uses openhands.sdk.utils.deprecation.deprecated; use the route "
         "decorator's deprecated=True flag instead."
     ]
@@ -206,7 +206,7 @@ def test_find_sdk_deprecated_fastapi_routes_in_file_flags_alias_import(tmp_path)
 
 def test_find_sdk_deprecated_fastapi_routes_in_file_ignores_non_route_usage(tmp_path):
     repo_root = tmp_path
-    source = repo_root / "openhands-agent-server" / "openhands" / "agent_server"
+    source = repo_root / "suricate-agent-server" / "openhands" / "agent_server"
     source.mkdir(parents=True)
     file_path = source / "helpers.py"
     file_path.write_text(

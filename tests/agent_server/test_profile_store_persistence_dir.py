@@ -71,7 +71,7 @@ def test_llm_profile_store_falls_back_to_home(
     home_without_persistence_env: Path,
 ) -> None:
     store = get_llm_profile_store()
-    assert store.base_dir == home_without_persistence_env / ".openhands" / "profiles"
+    assert store.base_dir == home_without_persistence_env / ".suricate" / "profiles"
 
 
 def test_agent_profile_store_falls_back_to_home(
@@ -79,7 +79,7 @@ def test_agent_profile_store_falls_back_to_home(
 ) -> None:
     store = get_agent_profile_store()
     assert (
-        store.base_dir == home_without_persistence_env / ".openhands" / "agent-profiles"
+        store.base_dir == home_without_persistence_env / ".suricate" / "agent-profiles"
     )
 
 
@@ -98,19 +98,19 @@ def test_settings_and_secrets_stores_fall_back_to_home(
     secrets_store = get_secrets_store(config)
     secrets_store.set_secret("OPENAI_API_KEY", "sk-test")
 
-    expected_dir = home_without_persistence_env / ".openhands"
+    expected_dir = home_without_persistence_env / ".suricate"
     assert settings_store.persistence_dir == expected_dir
     assert secrets_store.persistence_dir == expected_dir
     assert (expected_dir / "settings.json").is_file()
     assert (expected_dir / "secrets.json").is_file()
-    assert not (repo / "workspace" / ".openhands" / "settings.json").exists()
-    assert not (repo / "workspace" / ".openhands" / "secrets.json").exists()
+    assert not (repo / "workspace" / ".suricate" / "settings.json").exists()
+    assert not (repo / "workspace" / ".suricate" / "secrets.json").exists()
 
 
 def test_profile_stores_do_not_read_home_directory(
     isolated_persistence_dir: Path,
 ) -> None:
-    """The host user's ``~/.openhands/profiles/*.json`` must not appear."""
+    """The host user's ``~/.suricate/profiles/*.json`` must not appear."""
     llm = get_llm_profile_store()
     agent = get_agent_profile_store()
 
@@ -118,9 +118,9 @@ def test_profile_stores_do_not_read_home_directory(
     # persistence dir, not anywhere else.
     assert llm.base_dir.is_dir()
     assert agent.base_dir.is_dir()
-    home_profiles = Path.home() / ".openhands" / "profiles"
+    home_profiles = Path.home() / ".suricate" / "profiles"
     assert llm.base_dir != home_profiles
-    assert agent.base_dir != Path.home() / ".openhands" / "agent-profiles"
+    assert agent.base_dir != Path.home() / ".suricate" / "agent-profiles"
 
     # And the new dir should contain nothing the host happens to have.
     visible_names = set(llm.list()) | set(agent.list())

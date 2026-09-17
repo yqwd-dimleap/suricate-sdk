@@ -160,10 +160,10 @@ When the release PR is merged, the following happens automatically:
    GitHub release with tag `v<version>` and auto-generated release notes.
 2. **`pypi-release.yml`** triggers on the published release and publishes
    all four packages to PyPI:
-   - `openhands-sdk`
-   - `openhands-tools`
-   - `openhands-workspace`
-   - `openhands-agent-server`
+   - `suricate-sdk`
+   - `suricate-tools`
+   - `suricate-workspace`
+   - `suricate-agent-server`
 3. **`version-bump-prs.yml`** triggers after successful PyPI publish and
    creates downstream version bump PRs.
 
@@ -171,7 +171,7 @@ When the release PR is merged, the following happens automatically:
 
 ```bash
 # Check each package is available (allow a few minutes for indexing)
-for pkg in openhands-sdk openhands-tools openhands-workspace openhands-agent-server; do
+for pkg in suricate-sdk suricate-tools suricate-workspace suricate-agent-server; do
   curl -s -o /dev/null -w "$pkg: %{http_code}\n" \
     "https://pypi.org/pypi/$pkg/<version>/json"
 done

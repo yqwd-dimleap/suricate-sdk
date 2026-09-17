@@ -54,8 +54,8 @@ class PackageConfig:
     """Configuration for a single published package."""
 
     package: str  # dotted module path, e.g. "openhands.sdk"
-    distribution: str  # PyPI distribution name, e.g. "openhands-sdk"
-    source_dir: str  # repo-relative directory, e.g. "openhands-sdk"
+    distribution: str  # PyPI distribution name, e.g. "suricate-sdk"
+    source_dir: str  # repo-relative directory, e.g. "suricate-sdk"
 
 
 @dataclass(frozen=True, slots=True)
@@ -93,18 +93,18 @@ FIELD_DEFAULT_CHANGE_REPORT_ENV = "SDK_API_BREAKAGE_REPORT_PATH"
 PACKAGES: tuple[PackageConfig, ...] = (
     PackageConfig(
         package="openhands.sdk",
-        distribution="openhands-sdk",
-        source_dir="openhands-sdk",
+        distribution="suricate-sdk",
+        source_dir="suricate-sdk",
     ),
     PackageConfig(
         package="openhands.workspace",
-        distribution="openhands-workspace",
-        source_dir="openhands-workspace",
+        distribution="suricate-workspace",
+        source_dir="suricate-workspace",
     ),
     PackageConfig(
         package="openhands.tools",
-        distribution="openhands-tools",
-        source_dir="openhands-tools",
+        distribution="suricate-tools",
+        source_dir="suricate-tools",
     ),
 )
 
@@ -252,7 +252,7 @@ def _git_archive_directory(
 
 
 def _load_base_pyproject(base_ref: str) -> dict | None:
-    rel_path = "openhands-sdk/pyproject.toml"
+    rel_path = "suricate-sdk/pyproject.toml"
     content = _git_show_file(base_ref, rel_path)
     if content is None:
         print(
@@ -290,7 +290,7 @@ def _check_acp_version_bump(repo_root: str) -> int:
         return 0
 
     current_data = _read_pyproject(
-        os.path.join(repo_root, "openhands-sdk", "pyproject.toml")
+        os.path.join(repo_root, "suricate-sdk", "pyproject.toml")
     )
     old_req = _get_dependency_spec(base_data, ACP_DEPENDENCY)
     new_req = _get_dependency_spec(current_data, ACP_DEPENDENCY)
@@ -406,7 +406,7 @@ def get_pypi_baseline_version(pkg: str, current: str | None) -> str | None:
     than the current version. If ``current`` is None, use the latest release.
 
     Args:
-        pkg: Package name on PyPI (e.g., "openhands-sdk")
+        pkg: Package name on PyPI (e.g., "suricate-sdk")
         current: Current version from the workspace, or None for latest
 
     Returns:
@@ -414,7 +414,7 @@ def get_pypi_baseline_version(pkg: str, current: str | None) -> str | None:
     """
     req = urllib.request.Request(
         url=f"https://pypi.org/pypi/{pkg}/json",
-        headers={"User-Agent": "openhands-sdk-api-check/1.0"},
+        headers={"User-Agent": "suricate-sdk-api-check/1.0"},
         method="GET",
     )
     try:

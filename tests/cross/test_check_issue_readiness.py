@@ -43,7 +43,7 @@ I need to persist agent state between sessions.
 
 BUG_READY = """### Actual Behavior
 
-Running `pip install openhands-sdk` and then `pytest` fails with a TypeError
+Running `pip install suricate-sdk` and then `pytest` fails with a TypeError
 when registering a custom tool.
 
 ### Acceptance Criteria
@@ -110,7 +110,7 @@ def test_bug_ready_passes():
 
 def test_bug_missing_run_method_fails():
     body = BUG_READY.replace(
-        "Running `pip install openhands-sdk` and then `pytest` fails",
+        "Running `pip install suricate-sdk` and then `pytest` fails",
         "Running the SDK test harness fails",
     )
     result = evaluate_readiness(body, ["bug"])
@@ -120,7 +120,7 @@ def test_bug_missing_run_method_fails():
 
 def test_bug_backticked_python_is_a_valid_run_method():
     body = BUG_READY.replace(
-        "Running `pip install openhands-sdk` and then `pytest` fails with a TypeError",
+        "Running `pip install suricate-sdk` and then `pytest` fails with a TypeError",
         "Running `python` from a venv fails to start",
     )
     result = evaluate_readiness(body, ["bug"])

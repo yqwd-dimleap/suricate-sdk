@@ -13,8 +13,8 @@ class TestLoadHooksFromWorkspace:
     def test_load_hooks_success(self):
         """Test loading hooks from a valid hooks.json file."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            # Create .openhands/hooks.json
-            openhands_dir = Path(tmpdir) / ".openhands"
+            # Create .suricate/hooks.json
+            openhands_dir = Path(tmpdir) / ".suricate"
             openhands_dir.mkdir()
             hooks_file = openhands_dir / "hooks.json"
 
@@ -52,8 +52,8 @@ class TestLoadHooksFromWorkspace:
     def test_load_hooks_empty_hooks(self):
         """Test loading hooks when hooks.json is empty."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            # Create .openhands/hooks.json with empty content
-            openhands_dir = Path(tmpdir) / ".openhands"
+            # Create .suricate/hooks.json with empty content
+            openhands_dir = Path(tmpdir) / ".suricate"
             openhands_dir.mkdir()
             hooks_file = openhands_dir / "hooks.json"
             hooks_file.write_text("{}")
@@ -64,8 +64,8 @@ class TestLoadHooksFromWorkspace:
     def test_load_hooks_invalid_json(self):
         """Test loading hooks when hooks.json contains invalid JSON."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            # Create .openhands/hooks.json with invalid JSON
-            openhands_dir = Path(tmpdir) / ".openhands"
+            # Create .suricate/hooks.json with invalid JSON
+            openhands_dir = Path(tmpdir) / ".suricate"
             openhands_dir.mkdir()
             hooks_file = openhands_dir / "hooks.json"
             hooks_file.write_text("not valid json {")
@@ -76,8 +76,8 @@ class TestLoadHooksFromWorkspace:
     def test_load_hooks_multiple_event_types(self):
         """Test loading hooks with multiple event types."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            # Create .openhands/hooks.json with multiple event types
-            openhands_dir = Path(tmpdir) / ".openhands"
+            # Create .suricate/hooks.json with multiple event types
+            openhands_dir = Path(tmpdir) / ".suricate"
             openhands_dir.mkdir()
             hooks_file = openhands_dir / "hooks.json"
 
@@ -111,8 +111,8 @@ class TestLoadHooksFromWorkspace:
     def test_load_hooks_pascal_case_format(self):
         """Test loading hooks with PascalCase event names (legacy format)."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            # Create .openhands/hooks.json with PascalCase format
-            openhands_dir = Path(tmpdir) / ".openhands"
+            # Create .suricate/hooks.json with PascalCase format
+            openhands_dir = Path(tmpdir) / ".suricate"
             openhands_dir.mkdir()
             hooks_file = openhands_dir / "hooks.json"
 
@@ -142,3 +142,34 @@ class TestLoadHooksFromWorkspace:
             assert not result.is_empty()
             assert len(result.stop) == 1
             assert len(result.pre_tool_use) == 1
+
+    def test_load_hooks_from_legacy_openhands_dir(self):
+        """Pre-rename workspaces with .openhands/hooks.json still load."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            legacy_dir = Path(tmpdir) / ".openhands"
+            legacy_dir.mkdir()
+            hooks_file = legacy_dir / "hooks.json"
+            hooks_file.write_text(
+                json.dumps(
+                    {
+                        "hooks": {
+                            "stop": [
+                                {
+                                    "matcher": "*",
+                                    "hooks": [
+                                        {
+                                            "type": "command",
+                                            "command": "echo 'legacy'",
+                                        }
+                                    ],
+                                }
+                            ]
+                        }
+                    }
+                )
+            )
+
+            result = load_hooks_from_workspace(project_dir=tmpdir)
+
+            assert result is not None
+            assert len(result.stop) == 1

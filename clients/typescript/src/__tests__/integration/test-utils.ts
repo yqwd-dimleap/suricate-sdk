@@ -80,7 +80,7 @@ export function deleteWorkspaceFile(relativePath: string): void {
  *
  * Writing into the workspace from the host (the test runner) creates paths
  * owned by the host user, whereas the agent-server container runs as a
- * different user. If a test leaves a host-owned directory such as `.openhands`
+ * different user. If a test leaves a host-owned directory such as `.suricate`
  * behind, the server later fails to chmod it (e.g. profile activation errors
  * with "Operation not permitted"). Use this to fully clean up anything a test
  * writes into the workspace so it doesn't poison later tests.

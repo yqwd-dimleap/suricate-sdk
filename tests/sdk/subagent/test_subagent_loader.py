@@ -99,8 +99,8 @@ def test_load_project_agents_skips_readme(tmp_path: Path) -> None:
 
 
 def test_load_project_agents_from_openhands_dir(tmp_path: Path) -> None:
-    """Loads .md files from .openhands/ when .agents/ does not exist."""
-    oh_dir = tmp_path / ".openhands" / "agents"
+    """Loads .md files from .suricate/ when .agents/ does not exist."""
+    oh_dir = tmp_path / ".suricate" / "agents"
     oh_dir.mkdir(parents=True)
 
     (oh_dir / "legacy-agent.md").write_text(
@@ -113,19 +113,19 @@ def test_load_project_agents_from_openhands_dir(tmp_path: Path) -> None:
 
 
 def test_load_project_agents_agents_dir_wins_over_openhands(tmp_path: Path) -> None:
-    """.agents/ takes precedence over .openhands/ for duplicate names."""
+    """.agents/ takes precedence over .suricate/ for duplicate names."""
     agents_dir = tmp_path / ".agents" / "agents"
     agents_dir.mkdir(parents=True)
     (agents_dir / "shared.md").write_text(
         "---\nname: shared\ndescription: From .agents\n---\nAgents prompt."
     )
 
-    oh_dir = tmp_path / ".openhands" / "agents"
+    oh_dir = tmp_path / ".suricate" / "agents"
     oh_dir.mkdir(parents=True)
     (oh_dir / "shared.md").write_text(
         "---\nname: shared\ndescription: From .openhands\n---\nOH prompt."
     )
-    # Also put a unique agent in .openhands/ to verify it still loads
+    # Also put a unique agent in .suricate/ to verify it still loads
     (oh_dir / "only-in-oh.md").write_text(
         "---\nname: only-in-oh\ndescription: OH only\n---\nOH only prompt."
     )
@@ -140,14 +140,14 @@ def test_load_project_agents_agents_dir_wins_over_openhands(tmp_path: Path) -> N
 
 
 def test_load_project_agents_merges_both_dirs(tmp_path: Path) -> None:
-    """Agents from both .agents/ and .openhands/ are merged."""
+    """Agents from both .agents/ and .suricate/ are merged."""
     agents_dir = tmp_path / ".agents" / "agents"
     agents_dir.mkdir(parents=True)
     (agents_dir / "agent-a.md").write_text(
         "---\nname: agent-a\ndescription: A\n---\nA."
     )
 
-    oh_dir = tmp_path / ".openhands" / "agents"
+    oh_dir = tmp_path / ".suricate" / "agents"
     oh_dir.mkdir(parents=True)
     (oh_dir / "agent-b.md").write_text("---\nname: agent-b\ndescription: B\n---\nB.")
 
@@ -173,8 +173,8 @@ def test_load_user_agents(tmp_path: Path) -> None:
 
 
 def test_load_user_agents_from_openhands_dir(tmp_path: Path) -> None:
-    """Loads from ~/.openhands/ when ~/.agents/ does not exist."""
-    oh_dir = tmp_path / ".openhands" / "agents"
+    """Loads from ~/.suricate/ when ~/.agents/ does not exist."""
+    oh_dir = tmp_path / ".suricate" / "agents"
     oh_dir.mkdir(parents=True)
 
     (oh_dir / "legacy-user.md").write_text(
@@ -189,14 +189,14 @@ def test_load_user_agents_from_openhands_dir(tmp_path: Path) -> None:
 
 
 def test_load_user_agents_agents_dir_wins_over_openhands(tmp_path: Path) -> None:
-    """~/.agents/ takes precedence over ~/.openhands/ for duplicate names."""
+    """~/.agents/ takes precedence over ~/.suricate/ for duplicate names."""
     agents_dir = tmp_path / ".agents" / "agents"
     agents_dir.mkdir(parents=True)
     (agents_dir / "shared.md").write_text(
         "---\nname: shared\ndescription: From .agents\n---\nAgents."
     )
 
-    oh_dir = tmp_path / ".openhands" / "agents"
+    oh_dir = tmp_path / ".suricate" / "agents"
     oh_dir.mkdir(parents=True)
     (oh_dir / "shared.md").write_text(
         "---\nname: shared\ndescription: From .openhands\n---\nOH."

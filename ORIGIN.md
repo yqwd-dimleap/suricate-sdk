@@ -5,10 +5,10 @@ This tree was copied from https://github.com/OpenHands/software-agent-sdk
 
 Retained for Suricate Desktop / agent runtime:
 
-- `openhands-sdk/` — core agent SDK
-- `openhands-tools/` — tools
-- `openhands-workspace/` — workspace backends
-- `openhands-agent-server/` — agent server
+- `suricate-sdk/` — core agent SDK
+- `suricate-tools/` — tools
+- `suricate-workspace/` — workspace backends
+- `suricate-agent-server/` — agent server
 - `clients/`, `examples/`, `tests/` — clients, samples, tests
 
 Product-facing branding (docs, HTML UI titles, repo links) uses **Suricate**.

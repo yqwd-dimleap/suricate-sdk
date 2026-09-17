@@ -6,7 +6,7 @@ Prerequisites (see agent_sandbox_deploy/README.md for a full kind walkthrough):
   2. The agent-server SandboxTemplate + SandboxWarmPool applied:
        kubectl apply -f agent_sandbox_deploy/sandboxtemplate.yaml
        kubectl apply -f agent_sandbox_deploy/sandboxwarmpool.yaml
-  3. pip install openhands-workspace[agent-sandbox]
+  3. pip install suricate-workspace[agent-sandbox]
   4. export LLM_API_KEY=...   (and optionally LLM_MODEL, LLM_BASE_URL)
 
 The LLM is called from inside the pod (the agent runs on the agent server), so the

@@ -13,13 +13,37 @@ from openhands.sdk.utils.path import (
 )
 
 
-def test_get_user_persistence_dir_defaults_to_home_openhands(
+def test_get_user_persistence_dir_defaults_to_home_suricate(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.delenv("OH_PERSISTENCE_DIR", raising=False)
     fake_home = Path("/fake/home")
     monkeypatch.setattr(Path, "home", classmethod(lambda cls: fake_home))
-    assert get_user_persistence_dir() == fake_home / ".openhands"
+    assert get_user_persistence_dir() == fake_home / ".suricate"
+
+
+def test_get_user_persistence_dir_prefers_existing_legacy_openhands(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """Existing ~/.openhands installs keep working until ~/.suricate appears."""
+    monkeypatch.delenv("OH_PERSISTENCE_DIR", raising=False)
+    fake_home = tmp_path / "home"
+    legacy = fake_home / ".openhands"
+    legacy.mkdir(parents=True)
+    monkeypatch.setattr(Path, "home", classmethod(lambda cls: fake_home))
+    assert get_user_persistence_dir() == legacy
+
+
+def test_get_user_persistence_dir_prefers_suricate_over_legacy(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.delenv("OH_PERSISTENCE_DIR", raising=False)
+    fake_home = tmp_path / "home"
+    (fake_home / ".openhands").mkdir(parents=True)
+    suricate = fake_home / ".suricate"
+    suricate.mkdir(parents=True)
+    monkeypatch.setattr(Path, "home", classmethod(lambda cls: fake_home))
+    assert get_user_persistence_dir() == suricate
 
 
 def test_get_user_persistence_dir_honors_env(
@@ -35,7 +59,7 @@ def test_get_user_persistence_dir_resolved_at_call_time(
     monkeypatch.delenv("OH_PERSISTENCE_DIR", raising=False)
     fake_home = tmp_path / "home"
     monkeypatch.setattr(Path, "home", classmethod(lambda cls: fake_home))
-    assert get_user_persistence_dir() == fake_home / ".openhands"
+    assert get_user_persistence_dir() == fake_home / ".suricate"
 
     override = tmp_path / "persist"
     monkeypatch.setenv("OH_PERSISTENCE_DIR", str(override))
@@ -111,7 +135,7 @@ def test_is_local_path_source_detects_backslash_path_syntax():
 def test_is_local_path_source_detects_dot_paths():
     assert is_local_path_source(".")
     assert is_local_path_source("..")
-    assert is_local_path_source(".openhands")
+    assert is_local_path_source(".suricate")
 
 
 def test_is_absolute_path_source_detects_posix_and_windows_paths():

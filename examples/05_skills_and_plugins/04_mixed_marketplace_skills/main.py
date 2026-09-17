@@ -24,7 +24,7 @@ Directory Structure:
     └── README.md                # Documentation
 
 Usage:
-    # Install all skills from marketplace to ~/.openhands/skills/installed/
+    # Install all skills from marketplace to ~/.suricate/skills/installed/
     python main.py --install
 
     # Force reinstall (overwrite existing)

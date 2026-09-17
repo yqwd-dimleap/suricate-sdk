@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""ACP-registry drift check vs openhands-sdk.
+"""ACP-registry drift check vs suricate-sdk.
 
 Reads `src/models/acp-providers.json` (the TS-side source of truth) and
 compares it field-for-field against `ACP_PROVIDERS` in the installed
-openhands-sdk. Exits non-zero with a unified diff on mismatch.
+suricate-sdk. Exits non-zero with a unified diff on mismatch.
 
 Run locally:
     pip install -r scripts/requirements-acp-check.txt
@@ -59,7 +59,7 @@ def main(argv: list[str] | None = None) -> int:
         )
     except ImportError as exc:
         print(
-            "ERROR: cannot import openhands-sdk. "
+            "ERROR: cannot import suricate-sdk. "
             "Run `pip install -r scripts/requirements-acp-check.txt` first.",
             file=sys.stderr,
         )
@@ -74,7 +74,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.write:
         ts_json_path.write_text(py_text)
         n = len(py_data) if isinstance(py_data, dict) else 0
-        print(f"Wrote {ts_json_path} from openhands-sdk ACP_PROVIDERS ({n} providers).")
+        print(f"Wrote {ts_json_path} from suricate-sdk ACP_PROVIDERS ({n} providers).")
         return 0
 
     ts_data = _normalize(json.loads(ts_json_path.read_text()))
@@ -83,21 +83,21 @@ def main(argv: list[str] | None = None) -> int:
     if ts_text == py_text:
         n = len(ts_data) if isinstance(ts_data, dict) else 0
         print(
-            f"OK: src/models/acp-providers.json matches openhands-sdk ({n} providers)."
+            f"OK: src/models/acp-providers.json matches suricate-sdk ({n} providers)."
         )
         return 0
 
     print(
-        "ERROR: src/models/acp-providers.json has drifted from openhands-sdk.\n"
+        "ERROR: src/models/acp-providers.json has drifted from suricate-sdk.\n"
         "Update src/models/acp-providers.json to match the Python source at\n"
-        "openhands-sdk/openhands/sdk/settings/acp_providers.py.\n",
+        "suricate-sdk/openhands/sdk/settings/acp_providers.py.\n",
         file=sys.stderr,
     )
     diff = difflib.unified_diff(
         ts_text.splitlines(keepends=True),
         py_text.splitlines(keepends=True),
         fromfile="src/models/acp-providers.json",
-        tofile="openhands-sdk ACP_PROVIDERS",
+        tofile="suricate-sdk ACP_PROVIDERS",
     )
     sys.stderr.writelines(diff)
     return 1

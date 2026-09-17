@@ -633,7 +633,7 @@ describe('Auxiliary API clients', () => {
       enabled: true,
       source: '/tmp/my-skill',
       installed_at: '2026-05-12T12:00:00Z',
-      install_path: '/home/.openhands/skills/installed/my-skill',
+      install_path: '/home/.suricate/skills/installed/my-skill',
     };
     const installedList = { skills: [{ name: 'my-skill', version: '1.0.0', enabled: true }] };
     const toggleResponse = { name: 'my-skill', enabled: false };
@@ -811,7 +811,7 @@ describe('Auxiliary API clients', () => {
           condenser: null,
           metadata: { team: 'core' },
           level: 'project',
-          source: '/workspace/.openhands/agents/code-explorer.md',
+          source: '/workspace/.suricate/agents/code-explorer.md',
           is_builtin: false,
         },
       ],
@@ -915,7 +915,7 @@ describe('Auxiliary API clients', () => {
       resolved_ref: null,
       repo_path: null,
       installed_at: '2026-05-12T12:00:00Z',
-      install_path: '/home/.openhands/plugins/installed/demo-plugin',
+      install_path: '/home/.suricate/plugins/installed/demo-plugin',
     };
     const availableList = {
       plugins: [{ name: 'demo-plugin', version: '1.0.0', description: 'A test plugin' }],

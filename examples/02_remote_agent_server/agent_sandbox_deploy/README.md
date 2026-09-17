@@ -46,7 +46,7 @@ kubectl get pods -w
 ## 4. Install the client and run the example
 
 ```bash
-pip install openhands-workspace[agent-sandbox]
+pip install suricate-workspace[agent-sandbox]
 
 export LLM_API_KEY=...            # your LLM key (called from inside the pod)
 export LLM_MODEL=...              # optional, e.g. a hosted model id

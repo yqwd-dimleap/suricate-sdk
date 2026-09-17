@@ -170,7 +170,7 @@ export interface MarketplaceResponse {
 export type SubAgentLevel = 'project' | 'user' | 'builtin' | 'plugin' | 'programmatic';
 
 export interface SubAgentsRequest {
-  /** Load user agents from `~/.agents/agents` and `~/.openhands/agents`. */
+  /** Load user agents from `~/.agents/agents` and `~/.suricate/agents`. */
   load_user?: boolean;
   /** Load project agents from the workspace. */
   load_project?: boolean;

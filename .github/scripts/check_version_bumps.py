@@ -13,10 +13,10 @@ from pathlib import Path
 
 
 PACKAGE_FILES: dict[str, Path] = {
-    "openhands-sdk": Path("openhands-sdk/pyproject.toml"),
-    "openhands-tools": Path("openhands-tools/pyproject.toml"),
-    "openhands-workspace": Path("openhands-workspace/pyproject.toml"),
-    "openhands-agent-server": Path("openhands-agent-server/pyproject.toml"),
+    "suricate-sdk": Path("suricate-sdk/pyproject.toml"),
+    "suricate-tools": Path("suricate-tools/pyproject.toml"),
+    "suricate-workspace": Path("suricate-workspace/pyproject.toml"),
+    "suricate-agent-server": Path("suricate-agent-server/pyproject.toml"),
     "typescript-client": Path("clients/typescript/package.json"),
 }
 
@@ -115,7 +115,7 @@ def validate_package_version_consistency(repo_root: Path) -> list[str]:
         package: _read_current_version(repo_root, package_file)
         for package, package_file in PACKAGE_FILES.items()
     }
-    expected = versions["openhands-sdk"]
+    expected = versions["suricate-sdk"]
     mismatched = [
         f"{package} ({version})"
         for package, version in versions.items()
@@ -123,7 +123,7 @@ def validate_package_version_consistency(repo_root: Path) -> list[str]:
     ]
     if mismatched:
         return [
-            "Package versions must match openhands-sdk "
+            "Package versions must match suricate-sdk "
             f"({expected}); mismatched packages: {', '.join(mismatched)}."
         ]
     return []

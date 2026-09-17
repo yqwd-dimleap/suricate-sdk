@@ -30,7 +30,7 @@ base_url = os.getenv("LLM_BASE_URL")
 primary_model = os.getenv("LLM_MODEL", "gpt-5.5")
 
 # Use a temporary directory so this example doesn't pollute your home folder.
-# In real usage you can omit base_dir to use the default (~/.openhands/profiles).
+# In real usage you can omit base_dir to use the default (~/.suricate/profiles).
 profile_store_dir = tempfile.mkdtemp()
 store = LLMProfileStore(base_dir=profile_store_dir)
 

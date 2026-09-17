@@ -34,10 +34,10 @@ uv run pytest tests/tools/               # Tools tests only
 
 ```
 software-agent-sdk/
-├── openhands-sdk/          # Core SDK package
-├── openhands-tools/        # Built-in tools
-├── openhands-workspace/    # Workspace management
-├── openhands-agent-server/ # Agent server
+├── suricate-sdk/          # Core SDK package
+├── suricate-tools/        # Built-in tools
+├── suricate-workspace/    # Workspace management
+├── suricate-agent-server/ # Agent server
 ├── examples/               # Usage examples
 └── tests/                  # Test suites
 ```

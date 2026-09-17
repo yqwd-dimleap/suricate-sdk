@@ -85,7 +85,7 @@ python main.py --list
 
 3. **Skill Installation**: The `install_skills_from_marketplace()` function:
    - Resolves each skill source
-   - Copies the skill to `~/.openhands/skills/installed/`
+   - Copies the skill to `~/.suricate/skills/installed/`
    - Tracks installation metadata
 
 4. **Skill Loading**: Installed skills can be loaded with `load_installed_skills()`

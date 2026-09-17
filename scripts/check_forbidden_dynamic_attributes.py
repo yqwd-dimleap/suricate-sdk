@@ -17,7 +17,7 @@ another copy of an already-baselined call is still flagged.
 Regenerate the baseline after removing existing calls with::
 
     uv run python scripts/check_forbidden_dynamic_attributes.py \\
-        --update-baseline $(find openhands-sdk -name '*.py')
+        --update-baseline $(find suricate-sdk -name '*.py')
 """
 
 from __future__ import annotations
@@ -116,7 +116,7 @@ def _write_baseline(entries: list[tuple[str, str, str]]) -> None:
     BASELINE_FILE.write_text(json.dumps(payload, indent=4) + "\n")
 
 
-SDK_ROOT = "openhands-sdk"
+SDK_ROOT = "suricate-sdk"
 
 
 def _discover_sdk_files() -> list[str]:

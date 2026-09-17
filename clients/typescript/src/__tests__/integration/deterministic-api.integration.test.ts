@@ -103,7 +103,7 @@ describe('Deterministic API Integration Tests', () => {
       // Drop a file-based agent into the workspace and confirm the read-only
       // POST /api/sub-agents endpoint discovers it losslessly.
       const agentName = uniqueDirName('it-sub-agent');
-      const agentPath = `.openhands/agents/${agentName}.md`;
+      const agentPath = `.suricate/agents/${agentName}.md`;
       writeWorkspaceFile(
         agentPath,
         [
@@ -136,13 +136,13 @@ describe('Deterministic API Integration Tests', () => {
         expect(discovered?.system_prompt).toContain('integration-test project sub-agent');
         expect(discovered?.source).toContain(agentPath);
       } finally {
-        // Remove the entire `.openhands` tree this test created, not just the
+        // Remove the entire `.suricate` tree this test created, not just the
         // agent file. Writing it from the host leaves the directory owned by
         // the test-runner user; if left behind, the agent-server container
         // (which runs as a different user) later fails to chmod
         // `workspace/.openhands` during profile activation ("Operation not
         // permitted" -> 500 Failed to activate profile).
-        removeWorkspacePath('.openhands');
+        removeWorkspacePath('.suricate');
       }
     },
     config.testTimeout

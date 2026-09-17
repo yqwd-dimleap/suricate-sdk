@@ -1,15 +1,15 @@
 """Opt-in persistent memory across sessions (two-tier ``MEMORY.md``).
 
 With ``AgentContext(load_memory=True)`` a conversation loads the ``MEMORY.md``
-indexes from ``~/.openhands/memory/`` (user tier) and
-``<workspace>/.openhands/memory/`` (project tier) into the system prompt at
+indexes from ``~/.suricate/memory/`` (user tier) and
+``<workspace>/.suricate/memory/`` (project tier) into the system prompt at
 session start (the ``<MEMORY_CONTEXT>`` block), and the system prompt
 instructs the agent to maintain those files as it works.
 
 This example runs two conversations over the same workspace:
 
 1. Session 1 asks the agent to record a project decision in its persistent
-   project memory -- the agent writes ``.openhands/memory/MEMORY.md`` itself.
+   project memory -- the agent writes ``.suricate/memory/MEMORY.md`` itself.
 2. Session 2 is a brand-new conversation: the saved memory is injected into
    its system prompt automatically, so the agent already knows the decision
    without being told again.
@@ -53,7 +53,7 @@ tools = [Tool(name=TerminalTool.name), Tool(name=FileEditorTool.name)]
 agent_context = AgentContext(load_memory=True)
 
 with tempfile.TemporaryDirectory() as workspace:
-    memory_index = Path(workspace) / ".openhands" / "memory" / "MEMORY.md"
+    memory_index = Path(workspace) / ".suricate" / "memory" / "MEMORY.md"
 
     print("=" * 100)
     print("Session 1: ask the agent to record a decision in project memory.")

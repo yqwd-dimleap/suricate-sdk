@@ -14,8 +14,8 @@ You are a world-class documentation writer tasked with keeping the Suricate SDK 
 ### 1. Codebase Analysis
 
 - Scan `examples/` for available examples
-- Scan `openhands-tools/` for all available runtime tools
-- Check `openhands-sdk/openhands/tool/builtins/` for built-in tools
+- Scan `suricate-tools/` for all available runtime tools
+- Check `suricate-sdk/openhands/tool/builtins/` for built-in tools
 - Identify any new tools or removed tools since last update
 
 ### 2. Documentation Review

@@ -219,11 +219,11 @@ export type {
   ConversationType,
 } from './conversation/base';
 
-// ACP provider registry (mirrors openhands-sdk; see scripts/validate-acp-providers.mjs)
+// ACP provider registry (mirrors suricate-sdk; see scripts/validate-acp-providers.mjs)
 export { ACP_PROVIDERS, ACP_SETTINGS_KEYS, getAcpProvider } from './models/acp';
 export type { ACPModelOption, ACPProviderInfo, ACPProviderKey } from './models/acp';
 
-// Agent profile types (mirrors openhands-sdk agent_profile.py + resolver.py)
+// Agent profile types (mirrors suricate-sdk agent_profile.py + resolver.py)
 export type {
   AgentKind,
   ACPServerKind,
