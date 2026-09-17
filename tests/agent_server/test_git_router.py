@@ -11,6 +11,7 @@ from openhands.agent_server.api import create_app
 from openhands.agent_server.config import Config
 from openhands.sdk.git.exceptions import GitCommandError, GitRepositoryError
 from openhands.sdk.git.models import (
+    GitBlameLine,
     GitChange,
     GitChangeStatus,
     GitCommit,
@@ -559,8 +560,50 @@ def test_git_commit_endpoints_in_openapi(client):
     paths = response.json()["paths"]
     assert "/api/git/commits" in paths
     assert "/api/git/commits/{sha}/changes" in paths
+    assert "/api/git/blame" in paths
     diff_params = paths["/api/git/diff"]["get"]["parameters"]
     commit_param = next((p for p in diff_params if p["name"] == "commit"), None)
     assert commit_param is not None
     assert commit_param["in"] == "query"
     assert commit_param.get("required", False) is False
+
+
+@pytest.mark.asyncio
+async def test_git_blame_query_success(client):
+    """The blame endpoint forwards to the SDK and serializes each line."""
+    with patch("openhands.agent_server.git_router.get_git_blame") as mock_blame:
+        mock_blame.return_value = [
+            GitBlameLine(
+                line=1,
+                sha="a" * 40,
+                author="Agent",
+                author_time="2026-07-10T12:00:00+07:00",
+                summary="add logging",
+            )
+        ]
+
+        response = client.get("/api/git/blame", params={"path": "src/repo/a.py"})
+
+        assert response.status_code == 200
+        assert response.json() == [
+            {
+                "line": 1,
+                "sha": "a" * 40,
+                "author": "Agent",
+                "author_time": "2026-07-10T12:00:00+07:00",
+                "summary": "add logging",
+            }
+        ]
+        mock_blame.assert_called_once_with(Path("src/repo/a.py"))
+
+
+@pytest.mark.asyncio
+async def test_git_blame_query_not_a_repo_returns_empty(client):
+    """A non-repo workspace yields an empty list, not an error."""
+    with patch("openhands.agent_server.git_router.get_git_blame") as mock_blame:
+        mock_blame.side_effect = GitRepositoryError("not a git repository")
+
+        response = client.get("/api/git/blame", params={"path": "/not-a-repo/a.py"})
+
+        assert response.status_code == 200
+        assert response.json() == []

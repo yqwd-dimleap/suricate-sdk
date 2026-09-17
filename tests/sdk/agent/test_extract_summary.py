@@ -50,6 +50,34 @@ def test_extract_summary(agent, summary_value, expected_result):
     assert "summary" not in arguments
 
 
+def test_extract_summary_accepts_description_alias(agent):
+    """Models often emit description instead of the injected summary field."""
+    arguments = {
+        "command": "rg -n TailSFT",
+        "description": "Find TailSFT integration points in SFT code",
+    }
+
+    result = agent._extract_summary("terminal", arguments)
+
+    assert result == "Find TailSFT integration points in SFT code"
+    assert "description" not in arguments
+    assert arguments["command"] == "rg -n TailSFT"
+
+
+def test_extract_summary_prefers_summary_over_description(agent):
+    arguments = {
+        "command": "ls",
+        "summary": "list files",
+        "description": "ignored alias",
+    }
+
+    result = agent._extract_summary("terminal", arguments)
+
+    assert result == "list files"
+    assert "summary" not in arguments
+    assert "description" not in arguments
+
+
 def _make_mcp_tool_with_summary():
     """Create an MCP tool whose inputSchema declares 'summary' as required."""
     mcp_tool = mcp.types.Tool(
@@ -142,4 +170,33 @@ def test_extract_summary_still_pops_for_tools_without_summary_param(agent):
     result = agent._extract_summary(tool.name, arguments, tool=tool)
 
     assert result == "Fetch example"
+    assert "summary" not in arguments
+
+
+def test_extract_summary_preserves_tool_owned_description(agent):
+    """TaskAction declares description — do not treat it as a summary alias."""
+    from openhands.tools.task.definition import TaskAction
+    from openhands.sdk.tool import ToolDefinition
+
+    class _TaskLikeTool(ToolDefinition):
+        name = "task"
+
+        @classmethod
+        def create(cls, conv_state=None):
+            return []
+
+    tool = _TaskLikeTool(
+        description="delegate",
+        action_type=TaskAction,
+        observation_type=None,
+    )
+    arguments = {
+        "description": "Implement TailSFT",
+        "summary": "launch subagent",
+    }
+
+    result = agent._extract_summary(tool.name, arguments, tool=tool)
+
+    assert result == "launch subagent"
+    assert arguments["description"] == "Implement TailSFT"
     assert "summary" not in arguments

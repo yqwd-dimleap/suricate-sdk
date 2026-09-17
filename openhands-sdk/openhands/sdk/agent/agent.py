@@ -114,6 +114,23 @@ def _tool_has_summary_param(tool: ToolDefinition) -> bool:
     return False
 
 
+def _tool_has_description_param(tool: ToolDefinition) -> bool:
+    """Return True if the tool's own schema declares ``description`` as a parameter.
+
+    Some tools (e.g. TaskAction) have a real ``description`` field. Others do
+    not — but models often emit ``description`` as an alias for the injected
+    ``summary`` meta-field, which must be stripped before ``extra=forbid``
+    validation.
+    """
+    if "description" in tool.action_type.model_fields:
+        return True
+    if isinstance(tool, MCPToolDefinition):
+        props = tool.mcp_tool.inputSchema.get("properties", {})
+        if "description" in props:
+            return True
+    return False
+
+
 # Maximum number of events to scan during init_state defensive checks.
 # SystemPromptEvent must appear within this prefix (at index 0 or 1).
 INIT_STATE_PREFIX_SCAN_WINDOW = 3
@@ -1131,15 +1148,24 @@ class Agent(CriticMixin, ResponseDispatchMixin, AgentBase):
         own ``summary`` value is reused as the event-level summary because it
         is usually descriptive (e.g. a Jira ticket title).
 
+        Some models emit ``description`` instead of ``summary`` for the
+        injected meta-field. When the tool schema does **not** declare
+        ``description`` (unlike TaskAction), that key is popped and treated
+        as a summary alias so ``extra=forbid`` validation does not fail.
+
         Args:
             tool_name: Name of the tool being called
             arguments: Dictionary of tool arguments from LLM
-            tool: The tool definition (used to check if "summary" is a
-                declared parameter of the tool's schema)
+            tool: The tool definition (used to check if "summary" /
+                "description" are declared parameters of the tool's schema)
 
         Returns:
             The summary string - either from LLM or a default generated one
         """
+        tool_owns_description = tool is not None and _tool_has_description_param(
+            tool
+        )
+
         if tool is not None and _tool_has_summary_param(tool):
             # "summary" belongs to the tool — read it but don't pop it.
             # Reuse the tool's own value as the event summary (e.g. a Jira
@@ -1151,10 +1177,21 @@ class Agent(CriticMixin, ResponseDispatchMixin, AgentBase):
             return f"{tool_name}: {args_str}"
 
         summary = arguments.pop("summary", None)
+        description = (
+            None
+            if tool_owns_description
+            else arguments.pop("description", None)
+        )
 
-        # If valid summary provided by LLM, use it
+        # Prefer explicit summary; fall back to description alias.
         if summary is not None and isinstance(summary, str) and summary.strip():
-            return summary
+            return summary.strip()
+        if (
+            description is not None
+            and isinstance(description, str)
+            and description.strip()
+        ):
+            return description.strip()
 
         # Generate default summary: {tool_name}: {arguments}
         args_str = json.dumps(arguments)

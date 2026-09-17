@@ -163,11 +163,13 @@ class StuckDetectionThresholds(BaseModel):
         default=6, ge=1, description="Threshold for alternating pattern detection"
     )
     no_progress_actions: int = Field(
-        default=12,
+        default=0,
         ge=0,
         description=(
             "Emit a one-shot nudge after this many consecutive non-mutating "
             "actions (explore/read/think without file edits or finish). "
-            "0 disables. Does not mark the conversation STUCK."
+            "0 disables (default). Does not mark the conversation STUCK. "
+            "Set >0 only when you want the explore-streak corrective message "
+            "injected into the chat."
         ),
     )

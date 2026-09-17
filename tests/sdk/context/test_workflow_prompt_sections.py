@@ -16,6 +16,8 @@ def test_problem_solving_prioritizes_finish_over_exhaustive_explore():
     assert "Thoroughly explore" not in body
     assert "ORIENT" in body
     assert "REPRODUCE" in body
+    assert "PROGRESS_NARRATION" in body
+    assert "what you will do next" in body
 
 
 def test_efficiency_discourages_archaeology_and_urges_finish():
@@ -34,5 +36,6 @@ def test_default_registry_includes_updated_workflow_sections():
     rendered = create_registry(PromptPreset.DEFAULT).build(PromptContext())
     static = rendered.static or ""
     assert "PROBLEM_SOLVING_WORKFLOW" in static
+    assert "PROGRESS_NARRATION" in static
     assert "call `finish`" in static
     assert "Thoroughly explore relevant files" not in static

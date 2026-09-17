@@ -100,6 +100,27 @@ def test_no_progress_nudge_after_explore_streak():
     assert detector.get_no_progress_nudge() is None
 
 
+def test_no_progress_nudge_disabled_by_default():
+    """Default thresholds leave no_progress_actions at 0 so the explore
+    streak never injects a chat-visible corrective message."""
+    llm = LLM(model="gpt-4o-mini", usage_id="test-llm")
+    agent = Agent(llm=llm)
+    state = ConversationState.create(
+        id=uuid.uuid4(), agent=agent, workspace=LocalWorkspace(working_dir="/tmp")
+    )
+    state.events.append(
+        MessageEvent(
+            source="user",
+            llm_message=Message(role="user", content=[TextContent(text="fix it")]),
+        )
+    )
+    for _ in range(15):
+        state.events.append(_terminal_action())
+    detector = StuckDetector(state)
+    assert detector.no_progress_actions_threshold == 0
+    assert detector.get_no_progress_nudge() is None
+
+
 def test_no_progress_nudge_disabled_when_threshold_zero():
     detector = _make_detector([_terminal_action() for _ in range(5)], threshold=0)
     assert detector.get_no_progress_nudge() is None

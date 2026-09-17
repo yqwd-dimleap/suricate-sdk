@@ -39,3 +39,15 @@ class GitCommit(BaseModel):
 class GitCommitsPage(BaseModel):
     commits: list[GitCommit]
     has_more: bool
+
+
+class GitBlameLine(BaseModel):
+    """One annotated source line from ``git blame --line-porcelain``."""
+
+    # 1-based line number in the working-tree file.
+    line: int
+    sha: str
+    author: str
+    # ISO 8601 author date with UTC offset.
+    author_time: str
+    summary: str = ""

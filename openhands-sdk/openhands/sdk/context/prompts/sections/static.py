@@ -245,7 +245,15 @@ Notes:
    * Do not use mocks in tests unless strictly necessary and justify their use when they are used. You must always test real code paths in tests, NOT mocks.
    * If the repository lacks testing infrastructure and implementing tests would require extensive setup, consult with the user before investing time in building testing infrastructure
    * If the environment is not set up to run tests, consult with the user first before investing time to install all dependencies
-</PROBLEM_SOLVING_WORKFLOW>"""
+</PROBLEM_SOLVING_WORKFLOW>
+
+<PROGRESS_NARRATION>
+Keep the user oriented — do not silently chain long tool streaks.
+* After each round of exploration (search / read / terminal inspect) or editing, write a short note (1–3 sentences) covering: what you learned or changed, and what you will do next — then issue the next tool call.
+* Prefer: think → act → brief summary → next act. Avoid many consecutive tool calls with no intervening user-visible summary.
+* Between major phases (orient → implement → verify → finish), leave an explicit progress note so the chat never looks idle while you are still working.
+* Do not paste large file dumps into those notes; point at paths and the decision.
+</PROGRESS_NARRATION>"""
 
 
 class SelfDocumentationSection(_StaticTextSection):

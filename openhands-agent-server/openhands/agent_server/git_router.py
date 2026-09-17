@@ -9,6 +9,7 @@ from fastapi import APIRouter, HTTPException, Path as PathParam, Query
 
 from openhands.agent_server.server_details_router import update_last_execution_time
 from openhands.sdk.git.exceptions import GitError, GitRepositoryError
+from openhands.sdk.git.git_blame import get_git_blame
 from openhands.sdk.git.git_changes import get_git_changes
 from openhands.sdk.git.git_commits import (
     get_commit_changes,
@@ -16,7 +17,7 @@ from openhands.sdk.git.git_commits import (
     get_git_commits,
 )
 from openhands.sdk.git.git_diff import get_git_diff
-from openhands.sdk.git.models import GitChange, GitCommitsPage, GitDiff
+from openhands.sdk.git.models import GitBlameLine, GitChange, GitCommitsPage, GitDiff
 
 
 git_router = APIRouter(prefix="/git", tags=["Git"])
@@ -112,6 +113,19 @@ async def _get_commit_file_diff(path: str, commit: str) -> GitDiff:
         return GitDiff(modified=None, original=None)
 
 
+async def _get_git_blame(path: str) -> list[GitBlameLine]:
+    """Internal helper to get per-line blame for a file."""
+    update_last_execution_time()
+    loop = asyncio.get_running_loop()
+    try:
+        return await loop.run_in_executor(
+            None, functools.partial(get_git_blame, Path(path))
+        )
+    except GitRepositoryError:
+        logger.debug("Path %s is not in a git repository; returning no blame", path)
+        return []
+
+
 @git_router.get("/changes")
 async def git_changes_query(
     path: str = Query(..., description="The git repository path"),
@@ -178,4 +192,18 @@ async def git_commit_changes_query(
     except GitError as e:
         # GitRepositoryError is already handled in the helper (returns []).
         # An unknown/unresolvable sha raises GitCommandError -> 400.
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@git_router.get("/blame")
+async def git_blame_query(
+    path: str = Query(..., description="The file path to get blame for"),
+) -> list[GitBlameLine]:
+    """Per-line git blame for a single file (author + timestamp + sha)."""
+    try:
+        return await _get_git_blame(path)
+    except GitError as e:
+        # GitRepositoryError is already handled in the helper (returns []).
+        # Missing/oversized files and other GitError subclasses surface as
+        # 400 so the client can show an actionable error.
         raise HTTPException(status_code=400, detail=str(e))
